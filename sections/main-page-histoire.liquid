@@ -10,7 +10,7 @@
 <section class="zinor-histoire" aria-label="Notre histoire">
   <div class="zinor-histoire__container">
 
-    {# ----- BLOC 1 — Hero éditorial ----- #}
+    {% comment %} ----- BLOC 1 — Hero éditorial ----- {% endcomment %}
     <header class="zinor-histoire__hero fade-in">
       <p class="zinor-histoire__eyebrow">
         {{ section.settings.eyebrow | default: 'ZINOR PARIS' }}
@@ -20,7 +20,7 @@
       </h1>
     </header>
 
-    {# ----- BLOC 2 — Image pleine largeur ----- #}
+    {% comment %} ----- BLOC 2 — Image pleine largeur ----- {% endcomment %}
     {%- if section.settings.histoire_image != blank -%}
       <figure class="zinor-histoire__media fade-in">
         {{
@@ -35,7 +35,7 @@
       </figure>
     {%- endif -%}
 
-    {# ----- BLOC 3 — Texte éditorial ----- #}
+    {% comment %} ----- BLOC 3 — Texte éditorial ----- {% endcomment %}
     <article class="zinor-histoire__body fade-in">
       {{
         section.settings.histoire_texte
@@ -43,12 +43,12 @@
       }}
     </article>
 
-    {# ----- BLOC 4 — Signature ----- #}
+    {% comment %} ----- BLOC 4 — Signature ----- {% endcomment %}
     <p class="zinor-histoire__signature fade-in">
       {{ section.settings.signature_text | default: '— ZINOR PARIS, Paris' }}
     </p>
 
-    {# ----- BLOC 5 — CTA collection ----- #}
+    {% comment %} ----- BLOC 5 — CTA collection ----- {% endcomment %}
     {%- if section.settings.cta_text != blank -%}
       <div class="zinor-histoire__cta-wrapper fade-in">
         <a

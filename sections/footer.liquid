@@ -10,12 +10,12 @@
 <footer class="zinor-footer" role="contentinfo">
   <div class="zinor-footer__container">
 
-    {# ============================================================
+    {% comment %} ============================================================
        4 COLONNES PRINCIPALES
-       ============================================================ #}
+       ============================================================ {% endcomment %}
     <div class="zinor-footer__grid">
 
-      {# COL 1 — Identité #}
+      {% comment %} COL 1 — Identité {% endcomment %}
       <div class="zinor-footer__col zinor-footer__col--brand">
         <p class="zinor-footer__logo">
           {{ section.settings.brand_name | default: 'ZINOR PARIS' }}
@@ -28,7 +28,7 @@
         </p>
       </div>
 
-      {# COL 2 — Boutique #}
+      {% comment %} COL 2 — Boutique {% endcomment %}
       <div class="zinor-footer__col">
         <h3 class="zinor-footer__col-title">
           {{ section.settings.col_2_title | default: 'Boutique' }}
@@ -40,7 +40,7 @@
             {%- endfor -%}
           </ul>
         {%- else -%}
-          {# Liens par défaut si aucun menu sélectionné #}
+          {% comment %} Liens par défaut si aucun menu sélectionné {% endcomment %}
           <ul class="zinor-footer__links">
             <li><a href="/collections/elegance">Collection Élégance</a></li>
             <li><a href="/products/elegance">First Edition</a></li>
@@ -49,7 +49,7 @@
         {%- endif -%}
       </div>
 
-      {# COL 3 — Maison #}
+      {% comment %} COL 3 — Maison {% endcomment %}
       <div class="zinor-footer__col">
         <h3 class="zinor-footer__col-title">
           {{ section.settings.col_3_title | default: 'Maison' }}
@@ -78,7 +78,7 @@
         {%- endif -%}
       </div>
 
-      {# COL 4 — Service #}
+      {% comment %} COL 4 — Service {% endcomment %}
       <div class="zinor-footer__col">
         <h3 class="zinor-footer__col-title">
           {{ section.settings.col_4_title | default: 'Service' }}
@@ -102,9 +102,9 @@
 
     </div>
 
-    {# ============================================================
+    {% comment %} ============================================================
        BLOC NEWSLETTER — pleine largeur
-       ============================================================ #}
+       ============================================================ {% endcomment %}
     <div class="zinor-footer__newsletter">
       <div class="zinor-footer__newsletter-text">
         <p class="zinor-footer__newsletter-title">
@@ -122,16 +122,16 @@
       </div>
     </div>
 
-    {# ============================================================
+    {% comment %} ============================================================
        BOTTOM BAR — copyright + sélecteur de langue
-       ============================================================ #}
+       ============================================================ {% endcomment %}
     <div class="zinor-footer__bottom">
       <p class="zinor-footer__copyright">
         &copy; {{ 'now' | date: '%Y' }} {{ section.settings.brand_name | default: 'ZINOR PARIS' }}.
         {{ section.settings.copyright_text | default: 'Tous droits réservés.' }}
       </p>
 
-      {# Sélecteur de langue — uniquement si plusieurs locales actives #}
+      {% comment %} Sélecteur de langue — uniquement si plusieurs locales actives {% endcomment %}
       {%- if localization.available_locales.size > 1 -%}
         <form method="post" action="{{ routes.root_url }}/localization" class="zinor-footer__locale-form">
           <input type="hidden" name="_method" value="put">

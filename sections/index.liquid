@@ -18,9 +18,9 @@
   assign edition_remaining = edition_total | minus: edition_sold
 -%}
 
-{# ============================================================
+{% comment %} ============================================================
    HERO — plein écran avec image de fond + overlay gradient
-   ============================================================ #}
+   ============================================================ {% endcomment %}
 <section class="zinor-hero" aria-label="Présentation de l'édition">
   {%- if section.settings.hero_image != blank -%}
     <div class="zinor-hero__media">
@@ -37,7 +37,7 @@
     </div>
   {%- endif -%}
 
-  {# Overlay dégradé gauche → droite pour lisibilité du texte #}
+  {% comment %} Overlay dégradé gauche → droite pour lisibilité du texte {% endcomment %}
   <div class="zinor-hero__overlay" aria-hidden="true"></div>
 
   <div class="container zinor-hero__inner">
@@ -66,9 +66,9 @@
   </div>
 </section>
 
-{# ============================================================
+{% comment %} ============================================================
    COMPTEUR STOCK — bande pleine largeur, pulse subtile
-   ============================================================ #}
+   ============================================================ {% endcomment %}
 <section
   class="zinor-stock-bar fade-in"
   data-stock-counter
@@ -85,12 +85,12 @@
   </div>
 </section>
 
-{# ============================================================
+{% comment %} ============================================================
    PRODUIT PHARE — galerie + fiche produit
-   ============================================================ #}
+   ============================================================ {% endcomment %}
 <section class="zinor-featured" id="produit-phare" aria-label="Produit phare">
   <div class="zinor-featured__grid">
-    {# ----- GAUCHE : galerie 4 photos avec dots de navigation ----- #}
+    {% comment %} ----- GAUCHE : galerie 4 photos avec dots de navigation ----- {% endcomment %}
     <div class="zinor-featured__gallery fade-in" data-product-gallery>
       <div class="zinor-featured__gallery-main" data-gallery-main>
         {%- assign first_image = section.settings.product_image_1 -%}
@@ -117,7 +117,7 @@
         {%- endif -%}
       </div>
 
-      {# Dots de navigation — un dot par image définie dans les settings #}
+      {% comment %} Dots de navigation — un dot par image définie dans les settings {% endcomment %}
       <div class="zinor-featured__dots" data-gallery-thumbs role="tablist" aria-label="Visuels du produit">
         {%- for i in (1..4) -%}
           {%- assign image_key = 'product_image_' | append: i -%}
@@ -136,7 +136,7 @@
       </div>
     </div>
 
-    {# ----- DROITE : fiche produit ----- #}
+    {% comment %} ----- DROITE : fiche produit ----- {% endcomment %}
     <div class="zinor-featured__info fade-in">
       <p class="zinor-featured__label">
         {{ section.settings.product_label | default: 'ZINOR PARIS — MODÈLE ÉLÉGANCE' }}
@@ -197,12 +197,12 @@
   </div>
 </section>
 
-{# ============================================================
+{% comment %} ============================================================
    STORYTELLING — 2 colonnes 50/50, image + texte
-   ============================================================ #}
+   ============================================================ {% endcomment %}
 <section class="zinor-story" aria-label="Notre histoire">
   <div class="zinor-story__grid">
-    {# Image gauche — dos gravé #}
+    {% comment %} Image gauche — dos gravé {% endcomment %}
     <div class="zinor-story__media fade-in">
       {%- if section.settings.story_image != blank -%}
         {{
@@ -217,7 +217,7 @@
       {%- endif -%}
     </div>
 
-    {# Texte droite — centré verticalement #}
+    {% comment %} Texte droite — centré verticalement {% endcomment %}
     <div class="zinor-story__content fade-in">
       <p class="zinor-story__eyebrow">
         {{ section.settings.story_eyebrow | default: "L'INTENTION DERRIÈRE LA PIÈCE" }}
@@ -244,9 +244,9 @@
   </div>
 </section>
 
-{# ============================================================
+{% comment %} ============================================================
    CRAFTSMANSHIP — 3 colonnes : couronne / cadran / bracelet
-   ============================================================ #}
+   ============================================================ {% endcomment %}
 <section class="zinor-craft" aria-label="Détails de fabrication">
   <div class="container">
     <div class="zinor-craft__grid">
@@ -292,9 +292,9 @@
   </div>
 </section>
 
-{# ============================================================
+{% comment %} ============================================================
    STYLES SCOPÉS À LA SECTION
-   ============================================================ #}
+   ============================================================ {% endcomment %}
 {% stylesheet %}
   /* ========== HERO ========== */
   .zinor-hero {
@@ -722,9 +722,9 @@
   }
 {% endstylesheet %}
 
-{# ============================================================
+{% comment %} ============================================================
    SCHEMA — éditable dans l'éditeur Shopify
-   ============================================================ #}
+   ============================================================ {% endcomment %}
 {% schema %}
 {
   "name": "Homepage ZINOR",

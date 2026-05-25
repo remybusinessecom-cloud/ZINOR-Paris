@@ -18,13 +18,13 @@
   <div class="zinor-product__container">
     <div class="zinor-product__grid">
 
-      {# ============================================================
+      {% comment %} ============================================================
          COLONNE GAUCHE — GALERIE PRODUIT
          Desktop : miniatures verticales + image principale
          Mobile  : image principale en haut, dots en bas
-         ============================================================ #}
+         ============================================================ {% endcomment %}
       <div class="zinor-product__gallery" data-product-gallery>
-        {# ----- Miniatures verticales (desktop) ----- #}
+        {% comment %} ----- Miniatures verticales (desktop) ----- {% endcomment %}
         <div
           class="zinor-product__thumbs"
           data-gallery-thumbs
@@ -55,7 +55,7 @@
           {%- endfor -%}
         </div>
 
-        {# ----- Image principale ----- #}
+        {% comment %} ----- Image principale ----- {% endcomment %}
         <div class="zinor-product__main" data-gallery-main>
           {%- if product.featured_image -%}
             {{
@@ -72,7 +72,7 @@
           {%- endif -%}
         </div>
 
-        {# ----- Dots (mobile uniquement, via CSS) ----- #}
+        {% comment %} ----- Dots (mobile uniquement, via CSS) ----- {% endcomment %}
         <div
           class="zinor-product__dots"
           role="tablist"
@@ -93,10 +93,10 @@
         </div>
       </div>
 
-      {# ============================================================
+      {% comment %} ============================================================
          COLONNE DROITE — INFOS PRODUIT
          Sticky sur desktop, normal sur mobile
-         ============================================================ #}
+         ============================================================ {% endcomment %}
       <div class="zinor-product__info">
         <p class="zinor-product__label">ZINOR PARIS</p>
 
@@ -108,7 +108,7 @@
 
         <p class="zinor-product__price">{{ current_variant.price | money }}</p>
 
-        {# Badge de stock faible — conditionnel #}
+        {% comment %} Badge de stock faible — conditionnel {% endcomment %}
         {%- if show_low_stock
           and current_variant.inventory_management != blank
           and current_variant.inventory_quantity > 0
@@ -120,7 +120,7 @@
           </div>
         {%- endif -%}
 
-        {# Séparateur fin rose gold #}
+        {% comment %} Séparateur fin rose gold {% endcomment %}
         <hr class="zinor-product__divider" aria-hidden="true">
 
         <div class="zinor-product__intro">
@@ -130,7 +130,7 @@
           }}
         </div>
 
-        {# ----- FORMULAIRE ATC ----- #}
+        {% comment %} ----- FORMULAIRE ATC ----- {% endcomment %}
         <form
           method="post"
           action="{{ routes.cart_add_url }}"
@@ -157,11 +157,11 @@
           Livraison offerte en France · Retours 30 jours
         </p>
 
-        {# ============================================================
+        {% comment %} ============================================================
            ACCORDÉON — 3 sections
-           ============================================================ #}
+           ============================================================ {% endcomment %}
         <div class="zinor-accordion" data-accordion>
-          {# --- Caractéristiques --- #}
+          {% comment %} --- Caractéristiques --- {% endcomment %}
           <div
             class="zinor-accordion__item{% if accordion_open == 'caracteristiques' %} is-open{% endif %}"
             data-accordion-item>
@@ -196,7 +196,7 @@
             </div>
           </div>
 
-          {# --- Édition & Livraison --- #}
+          {% comment %} --- Édition & Livraison --- {% endcomment %}
           <div
             class="zinor-accordion__item{% if accordion_open == 'edition' %} is-open{% endif %}"
             data-accordion-item>
@@ -226,7 +226,7 @@
             </div>
           </div>
 
-          {# --- Notre histoire --- #}
+          {% comment %} --- Notre histoire --- {% endcomment %}
           <div
             class="zinor-accordion__item{% if accordion_open == 'histoire' %} is-open{% endif %}"
             data-accordion-item>
@@ -257,9 +257,9 @@
     </div>
   </div>
 
-  {# ============================================================
+  {% comment %} ============================================================
      OUTRO — pleine largeur avec image de fond fixe (desktop)
-     ============================================================ #}
+     ============================================================ {% endcomment %}
   <div
     class="zinor-product__outro"
     {% if section.settings.outro_image != blank %}
@@ -276,10 +276,10 @@
     </div>
   </div>
 
-  {# ============================================================
+  {% comment %} ============================================================
      STICKY ATC — visible sur mobile uniquement quand l'ATC
      principal sort du viewport (toggle via JS)
-     ============================================================ #}
+     ============================================================ {% endcomment %}
   <div class="zinor-product__sticky-atc" data-sticky-atc aria-hidden="true">
     <div class="zinor-product__sticky-atc-inner">
       <p class="zinor-product__sticky-atc-price">{{ current_variant.price | money }}</p>
@@ -294,14 +294,14 @@
   </div>
 </section>
 
-{# JSON-LD pour le SEO produit #}
+{% comment %} JSON-LD pour le SEO produit {% endcomment %}
 <script type="application/ld+json">
   {{ product | structured_data }}
 </script>
 
-{# ============================================================
+{% comment %} ============================================================
    STYLES SCOPÉS
-   ============================================================ #}
+   ============================================================ {% endcomment %}
 {% stylesheet %}
   /* ========== CONTENEUR & GRID ========== */
   .zinor-product {
@@ -820,9 +820,9 @@
   }
 {% endstylesheet %}
 
-{# ============================================================
+{% comment %} ============================================================
    SCHEMA — paramètres éditables dans l'éditeur Shopify
-   ============================================================ #}
+   ============================================================ {% endcomment %}
 {% schema %}
 {
   "name": "Fiche produit",

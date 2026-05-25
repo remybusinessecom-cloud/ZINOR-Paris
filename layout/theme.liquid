@@ -1,33 +1,33 @@
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
   <head>
-    {# ============================================================
+    {% comment %} ============================================================
        ZINOR PARIS — Maison horlogère parisienne indépendante
        Layout principal du thème — Shopify Online Store 2.0
-       ============================================================ #}
+       ============================================================ {% endcomment %}
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="{{ settings.color_background | default: '#0A0A0A' }}">
 
-    {# Préconnexions performance — Google Fonts et CDN Shopify #}
+    {% comment %} Préconnexions performance — Google Fonts et CDN Shopify {% endcomment %}
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 
-    {# Typographie — Cormorant Garamond (titres) + Inter (corps)
-       display=swap pour ne pas bloquer le rendu (Core Web Vitals) #}
+    {% comment %} Typographie — Cormorant Garamond (titres) + Inter (corps)
+       display=swap pour ne pas bloquer le rendu (Core Web Vitals) {% endcomment %}
     <link
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap"
       rel="stylesheet">
 
-    {# Favicon #}
+    {% comment %} Favicon {% endcomment %}
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
     {%- endif -%}
 
-    {# SEO — title, description, canonical, Open Graph #}
+    {% comment %} SEO — title, description, canonical, Open Graph {% endcomment %}
     <title>
       {{ page_title }}
       {%- if current_tags %} &ndash; {{ 'general.meta.tags' | t: tags: current_tags | join: ', ' -}}{% endif -%}
@@ -41,7 +41,7 @@
 
     <link rel="canonical" href="{{ canonical_url }}">
 
-    {# Open Graph — partage social #}
+    {% comment %} Open Graph — partage social {% endcomment %}
     <meta property="og:site_name" content="{{ shop.name }}">
     <meta property="og:url" content="{{ canonical_url }}">
     <meta property="og:title" content="{{ page_title | escape }}">
@@ -54,14 +54,14 @@
       <meta property="og:image:width" content="1200">
     {%- endif -%}
 
-    {# Twitter Card #}
+    {% comment %} Twitter Card {% endcomment %}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ page_title | escape }}">
 
-    {# Feuille de style principale du thème #}
+    {% comment %} Feuille de style principale du thème {% endcomment %}
     {{ 'theme.css' | asset_url | stylesheet_tag }}
 
-    {# Variables CSS injectées depuis les paramètres du thème #}
+    {% comment %} Variables CSS injectées depuis les paramètres du thème {% endcomment %}
     <style>
       :root {
         --color-background: {{ settings.color_background | default: '#0A0A0A' }};
@@ -72,20 +72,20 @@
       }
     </style>
 
-    {# Hook obligatoire Shopify — doit être présent dans <head> #}
+    {% comment %} Hook obligatoire Shopify — doit être présent dans <head> {% endcomment %}
     {{ content_for_header }}
   </head>
 
   <body class="template-{{ template | replace: '.', '-' | handle }}">
-    {# Lien d'évitement — accessibilité clavier #}
+    {% comment %} Lien d'évitement — accessibilité clavier {% endcomment %}
     <a href="#MainContent" class="skip-to-content">
       {{ 'accessibility.skip_to_content' | t }}
     </a>
 
-    {# ====== EN-TÊTE — sticky avec navigation principale ====== #}
+    {% comment %} ====== EN-TÊTE — sticky avec navigation principale ====== {% endcomment %}
     <header class="site-header" id="SiteHeader" data-sticky-header>
       <div class="container site-header__inner">
-        {# Logo — texte par défaut, image si définie dans les réglages #}
+        {% comment %} Logo — texte par défaut, image si définie dans les réglages {% endcomment %}
         <a href="{{ routes.root_url }}" class="site-header__logo" aria-label="{{ shop.name }}">
           {%- if settings.logo != blank -%}
             {{ settings.logo | image_url: width: 240 | image_tag:
@@ -99,7 +99,7 @@
           {%- endif -%}
         </a>
 
-        {# Navigation principale — basée sur le menu Shopify "main-menu" #}
+        {% comment %} Navigation principale — basée sur le menu Shopify "main-menu" {% endcomment %}
         <nav class="site-nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
           <ul class="site-nav__list">
             {%- for link in linklists.main-menu.links -%}
@@ -110,7 +110,7 @@
           </ul>
         </nav>
 
-        {# Actions — panier #}
+        {% comment %} Actions — panier {% endcomment %}
         <div class="site-header__actions">
           <a href="{{ routes.cart_url }}" class="site-header__cart-link" aria-label="{{ 'cart.general.title' | t }}">
             {{ 'cart.general.title' | t }}
@@ -120,15 +120,15 @@
       </div>
     </header>
 
-    {# ====== CONTENU PRINCIPAL ====== #}
+    {% comment %} ====== CONTENU PRINCIPAL ====== {% endcomment %}
     <main id="MainContent" class="main-content" role="main">
       {{ content_for_layout }}
     </main>
 
-    {# ====== PIED DE PAGE — section éditable ====== #}
+    {% comment %} ====== PIED DE PAGE — section éditable ====== {% endcomment %}
     {% section 'footer' %}
 
-    {# Script principal du thème — defer pour ne pas bloquer le rendu #}
+    {% comment %} Script principal du thème — defer pour ne pas bloquer le rendu {% endcomment %}
     <script src="{{ 'theme.js' | asset_url }}" defer></script>
   </body>
 </html>

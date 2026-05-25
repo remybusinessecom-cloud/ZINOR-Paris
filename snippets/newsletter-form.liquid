@@ -10,7 +10,7 @@
 
 <div class="zinor-newsletter" data-newsletter>
   {%- form 'customer', class: 'zinor-newsletter__form' -%}
-    {# Input caché — flag accepts_marketing pour la newsletter #}
+    {% comment %} Input caché — flag accepts_marketing pour la newsletter {% endcomment %}
     <input type="hidden" name="contact[tags]" value="newsletter">
     <input type="hidden" name="contact[accepts_marketing]" value="true">
 

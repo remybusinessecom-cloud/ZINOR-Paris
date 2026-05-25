@@ -10,9 +10,9 @@
   <div class="zinor-contact__container">
     <div class="zinor-contact__grid">
 
-      {# ============================================================
+      {% comment %} ============================================================
          COLONNE GAUCHE — Coordonnées (40%)
-         ============================================================ #}
+         ============================================================ {% endcomment %}
       <div class="zinor-contact__info fade-in">
         <h1 class="zinor-contact__title">
           {{ section.settings.title | default: 'Écrire à ZINOR PARIS' }}
@@ -57,9 +57,9 @@
         </ul>
       </div>
 
-      {# ============================================================
+      {% comment %} ============================================================
          COLONNE DROITE — Formulaire Shopify (60%)
-         ============================================================ #}
+         ============================================================ {% endcomment %}
       <div class="zinor-contact__form-wrapper fade-in">
         {%- form 'contact', class: 'zinor-contact__form' -%}
 
