@@ -1,9 +1,53 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "homepage": {
       "type": "index",
-      "settings": {}
+      "settings": {
+        "hero_image": "shopify://shop_images/Montre_ZINOR_Paris_sur_marbre.png",
+        "hero_eyebrow": "FIRST EDITION — 100 PIÈCES",
+        "hero_title": "<p>L'élégance,<br/>distillée.</p>",
+        "hero_subtitle": "Une montre. Une intention. Un siècle de style.",
+        "hero_cta_label": "Découvrir l'Élégance",
+        "hero_cta_link": "",
+        "edition_total": 100,
+        "edition_sold": 0,
+        "stock_text": "pièces restantes sur",
+        "stock_subtext": "Édition non renouvelée.",
+        "featured_product": "",
+        "product_label": "ZINOR PARIS — MODÈLE ÉLÉGANCE",
+        "product_title": "First Edition",
+        "product_price_fallback": "à partir de 590 €",
+        "product_description": "Cadran soleil bleu nuit. Finition rose gold. Bracelet cuir grainé cognac. Mouvement SEIKO VJ32 Quartz Japon.",
+        "product_cta": "Acquérir cette pièce",
+        "product_cta_link": "",
+        "product_reassurance": "Livraison offerte · Retours 30 jours · Certificat d'authenticité",
+        "story_eyebrow": "L'INTENTION DERRIÈRE LA PIÈCE",
+        "story_title": "<p>100 montres.<br/>Une seule promesse.</p>",
+        "story_body": "<p>ZINOR PARIS naît d'une conviction simple : le luxe n'a pas besoin de bruit. L'Élégance First Edition est conçue pour durer, pensée à Paris, assemblée avec exigence. Chaque pièce porte un numéro. La vôtre vous attend.</p>",
+        "story_link_label": "Notre histoire",
+        "story_link": "",
+        "craft_icon_1": "crown",
+        "craft_title_1": "Couronne gravée Z",
+        "craft_desc_1": "Chaque détail est signé.",
+        "craft_icon_2": "dial",
+        "craft_title_2": "Cadran soleil bleu nuit",
+        "craft_desc_2": "Verre minéral antireflet.",
+        "craft_icon_3": "strap",
+        "craft_title_3": "Cuir grainé cognac",
+        "craft_desc_3": "Boucle rose gold gravée."
+      }
     }
   },
-  "order": ["homepage"]
+  "order": [
+    "homepage"
+  ]
 }
