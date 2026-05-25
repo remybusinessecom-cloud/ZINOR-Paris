@@ -1,0 +1,523 @@
+/* ============================================================
+   ZINOR PARIS — Feuille de style principale
+   Maison horlogère parisienne indépendante
+   Architecture : variables CSS, reset moderne, mobile-first
+   Breakpoints : 768px (tablette) — 1024px (desktop)
+   ============================================================ */
+
+/* ===== 1. VARIABLES CSS — PALETTE & TYPOGRAPHIE ===== */
+:root {
+  /* Couleurs — palette ZINOR PARIS (override possible par theme.liquid) */
+  --color-background: #0A0A0A;        /* Noir profond — fond principal */
+  --color-surface: #141414;           /* Surface secondaire — cartes, blocs */
+  --color-accent: #C4956A;            /* Rose gold — couleur boîtier */
+  --color-accent-secondary: #1B2A4A;  /* Bleu nuit — couleur cadran */
+  --color-text: #F5F0EB;              /* Blanc chaud — texte principal */
+  --color-text-muted: rgba(245, 240, 235, 0.65);
+  --color-border: rgba(245, 240, 235, 0.12);
+
+  /* Typographie */
+  --font-heading: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Tailles de fond — échelle modulaire */
+  --fs-xs: 0.75rem;     /* 12px — labels, mentions légales */
+  --fs-sm: 0.875rem;    /* 14px — corps secondaire */
+  --fs-base: 1rem;      /* 16px — corps */
+  --fs-md: 1.125rem;    /* 18px — corps large */
+  --fs-lg: 1.5rem;      /* 24px — sous-titres */
+  --fs-xl: 2.25rem;     /* 36px — titres section */
+  --fs-2xl: 3.5rem;     /* 56px — titres hero (desktop) */
+  --fs-3xl: 5rem;       /* 80px — display */
+
+  /* Espacements — système 4/8 */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --space-32: 8rem;
+
+  /* Layout */
+  --container-max: 1400px;
+  --container-padding: 1.5rem;
+  --header-height: 72px;
+
+  /* Transitions — animations subtiles */
+  --transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 800ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Lettrage — uppercase labels typiques du luxe */
+  --letter-spacing-wide: 0.15em;
+  --letter-spacing-wider: 0.25em;
+}
+
+/* ===== 2. RESET MODERNE ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  font-weight: 300;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+img,
+picture,
+video,
+svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+
+/* ===== 3. TYPOGRAPHIE GLOBALE ===== */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
+h1 { font-size: var(--fs-2xl); }
+h2 { font-size: var(--fs-xl); }
+h3 { font-size: var(--fs-lg); }
+h4 { font-size: var(--fs-md); }
+
+p {
+  margin-bottom: var(--space-4);
+}
+
+/* Italique élégante — signature Cormorant */
+em {
+  font-style: italic;
+  font-family: var(--font-heading);
+}
+
+/* Labels uppercase — typique du luxe horloger */
+.label,
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: var(--letter-spacing-wider);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* ===== 4. ACCESSIBILITÉ ===== */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  background: var(--color-accent);
+  color: var(--color-background);
+  padding: var(--space-4);
+  z-index: 9999;
+  transition: top var(--transition-fast);
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+}
+
+/* ===== 5. LAYOUT — CONTAINER ===== */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+
+/* Sections — espacements généreux propre au luxe */
+.section {
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-16);
+}
+
+@media (min-width: 768px) {
+  .section {
+    padding-top: var(--space-24);
+    padding-bottom: var(--space-24);
+  }
+}
+
+@media (min-width: 1024px) {
+  .section {
+    padding-top: var(--space-32);
+    padding-bottom: var(--space-32);
+  }
+}
+
+/* ===== 6. COMPOSANTS — BOUTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-8);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-decoration: none;
+  min-height: 52px;
+}
+
+/* Bouton principal — rose gold sur fond noir */
+.btn--primary {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  border-color: var(--color-accent);
+}
+
+.btn--primary:hover,
+.btn--primary:focus {
+  background-color: transparent;
+  color: var(--color-accent);
+}
+
+/* Bouton secondaire — outline rose gold */
+.btn--secondary {
+  background-color: transparent;
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.btn--secondary:hover,
+.btn--secondary:focus {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+}
+
+/* Bouton ghost — texte uniquement */
+.btn--ghost {
+  background-color: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.btn--ghost:hover,
+.btn--ghost:focus {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ===== 7. LIENS ===== */
+.link {
+  color: var(--color-accent);
+  position: relative;
+  display: inline-block;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background-color: currentColor;
+  transition: width var(--transition-base);
+}
+
+.link:hover::after {
+  width: 100%;
+}
+
+/* ===== 8. EN-TÊTE — STICKY HEADER ===== */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-background);
+  border-bottom: 1px solid transparent;
+  transition: background-color var(--transition-base),
+              border-color var(--transition-base),
+              backdrop-filter var(--transition-base);
+}
+
+/* État après scroll — fond translucide avec backdrop-filter */
+.site-header.is-scrolled {
+  background-color: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom-color: var(--color-border);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--header-height);
+  gap: var(--space-8);
+}
+
+.site-header__logo {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.site-header__logo-text em {
+  color: var(--color-accent);
+  font-weight: 400;
+}
+
+.site-nav {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .site-nav {
+    display: block;
+  }
+}
+
+.site-nav__list {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.site-nav__link {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text);
+  transition: color var(--transition-fast);
+}
+
+.site-nav__link:hover {
+  color: var(--color-accent);
+}
+
+.site-header__cart-link {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+.site-header__cart-link:hover {
+  color: var(--color-accent);
+}
+
+.site-header__cart-count {
+  color: var(--color-accent);
+  margin-left: var(--space-1);
+}
+
+/* ===== 9. PIED DE PAGE ===== */
+.site-footer {
+  background-color: var(--color-background);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-8);
+  margin-top: auto;
+}
+
+.site-footer__inner {
+  display: grid;
+  gap: var(--space-12);
+}
+
+@media (min-width: 768px) {
+  .site-footer__inner {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.site-footer__title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
+}
+
+.site-footer__title em {
+  color: var(--color-accent);
+}
+
+.site-footer__tagline {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+  max-width: 36ch;
+}
+
+.site-footer__columns {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+@media (min-width: 768px) {
+  .site-footer__columns {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+.site-footer__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.site-footer__list a,
+.site-footer__social a {
+  font-size: var(--fs-xs);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+}
+
+.site-footer__list a:hover,
+.site-footer__social a:hover {
+  color: var(--color-accent);
+}
+
+.site-footer__legal {
+  grid-column: 1 / -1;
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-6);
+  margin-top: var(--space-8);
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--color-text-muted);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+}
+
+/* ===== 10. ANIMATIONS — FADE-IN AU SCROLL ===== */
+/* État initial — invisible et décalé vers le bas */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--transition-slow), transform var(--transition-slow);
+}
+
+/* État visible — déclenché par IntersectionObserver dans theme.js */
+.fade-in.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect des préférences utilisateur — accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .fade-in {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ===== 11. UTILITAIRES ===== */
+.text-center { text-align: center; }
+.text-accent { color: var(--color-accent); }
+.text-muted { color: var(--color-text-muted); }
+
+.mt-0 { margin-top: 0; }
+.mt-4 { margin-top: var(--space-4); }
+.mt-8 { margin-top: var(--space-8); }
+.mb-0 { margin-bottom: 0; }
+.mb-4 { margin-bottom: var(--space-4); }
+.mb-8 { margin-bottom: var(--space-8); }
+
+/* ===== 12. RESPONSIVE — AJUSTEMENTS TYPOGRAPHIQUES ===== */
+@media (min-width: 768px) {
+  h1 { font-size: var(--fs-3xl); }
+  h2 { font-size: var(--fs-2xl); }
+  h3 { font-size: var(--fs-xl); }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --container-padding: 2.5rem;
+  }
+}

@@ -1,0 +1,178 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "ZINOR PARIS",
+    "theme_version": "1.0.0",
+    "theme_author": "ZINOR PARIS",
+    "theme_documentation_url": "https://zinor.paris",
+    "theme_support_url": "https://zinor.paris/contact"
+  },
+  {
+    "name": "Identité de marque",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Logo"
+      },
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo de la marque",
+        "info": "Format recommandé : SVG ou PNG transparent, hauteur 40px"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Format recommandé : PNG 32x32px"
+      }
+    ]
+  },
+  {
+    "name": "Couleurs",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Palette ZINOR PARIS"
+      },
+      {
+        "type": "paragraph",
+        "content": "Palette inspirée du produit réel : noir profond, rose gold du boîtier, bleu nuit du cadran."
+      },
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Fond principal",
+        "default": "#0A0A0A",
+        "info": "Noir profond — fond global du site"
+      },
+      {
+        "type": "color",
+        "id": "color_surface",
+        "label": "Surface secondaire",
+        "default": "#141414",
+        "info": "Cartes, blocs, sections alternatives"
+      },
+      {
+        "type": "color",
+        "id": "color_accent",
+        "label": "Accent principal — Rose Gold",
+        "default": "#C4956A",
+        "info": "Couleur du boîtier — boutons, liens, accents"
+      },
+      {
+        "type": "color",
+        "id": "color_accent_secondary",
+        "label": "Accent secondaire — Bleu Nuit",
+        "default": "#1B2A4A",
+        "info": "Couleur du cadran — touches secondaires"
+      },
+      {
+        "type": "color",
+        "id": "color_text",
+        "label": "Texte principal",
+        "default": "#F5F0EB",
+        "info": "Blanc chaud — texte global"
+      }
+    ]
+  },
+  {
+    "name": "Typographie",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Les polices sont chargées via Google Fonts depuis layout/theme.liquid : Cormorant Garamond (titres) et Inter (corps)."
+      },
+      {
+        "type": "header",
+        "content": "Tailles globales"
+      },
+      {
+        "type": "range",
+        "id": "type_base_size",
+        "label": "Taille du corps (px)",
+        "min": 14,
+        "max": 18,
+        "step": 1,
+        "default": 16,
+        "unit": "px"
+      }
+    ]
+  },
+  {
+    "name": "Réseaux sociaux",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Liens sociaux"
+      },
+      {
+        "type": "url",
+        "id": "social_instagram_link",
+        "label": "Instagram",
+        "info": "URL complète du compte Instagram"
+      },
+      {
+        "type": "url",
+        "id": "social_facebook_link",
+        "label": "Facebook"
+      },
+      {
+        "type": "url",
+        "id": "social_tiktok_link",
+        "label": "TikTok"
+      }
+    ]
+  },
+  {
+    "name": "Édition limitée",
+    "settings": [
+      {
+        "type": "header",
+        "content": "First Edition — Élégance"
+      },
+      {
+        "type": "paragraph",
+        "content": "Paramètres pour la première édition limitée à 100 pièces."
+      },
+      {
+        "type": "text",
+        "id": "edition_name",
+        "label": "Nom de l'édition",
+        "default": "First Edition — Élégance"
+      },
+      {
+        "type": "number",
+        "id": "edition_total_pieces",
+        "label": "Nombre total de pièces",
+        "default": 100
+      },
+      {
+        "type": "number",
+        "id": "edition_sold_pieces",
+        "label": "Pièces déjà vendues",
+        "default": 0,
+        "info": "Mettre à jour manuellement pour le compteur public"
+      }
+    ]
+  },
+  {
+    "name": "Mise en page",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Container"
+      },
+      {
+        "type": "range",
+        "id": "layout_container_max",
+        "label": "Largeur maximale du container",
+        "min": 1200,
+        "max": 1600,
+        "step": 50,
+        "default": 1400,
+        "unit": "px"
+      }
+    ]
+  }
+]

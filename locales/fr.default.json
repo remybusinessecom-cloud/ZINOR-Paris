@@ -1,0 +1,120 @@
+{
+  "general": {
+    "meta": {
+      "tags": "Étiquettes : {{ tags }}",
+      "page": "Page {{ page }}"
+    },
+    "footer": {
+      "tagline": "Maison horlogère parisienne indépendante. Chaque pièce, une signature.",
+      "legal": "Tous droits réservés."
+    },
+    "search": {
+      "placeholder": "Rechercher",
+      "submit": "Rechercher",
+      "title": "Recherche",
+      "no_results": "Aucun résultat pour « {{ terms }} »."
+    },
+    "newsletter": {
+      "label": "Adresse e-mail",
+      "placeholder": "Votre adresse e-mail",
+      "submit": "S'inscrire",
+      "success": "Merci de votre inscription.",
+      "heading": "Cercle privé ZINOR"
+    },
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant"
+    }
+  },
+  "accessibility": {
+    "skip_to_content": "Aller au contenu",
+    "main_navigation": "Navigation principale",
+    "footer_navigation": "Navigation du pied de page",
+    "close": "Fermer",
+    "menu": "Menu",
+    "next_slide": "Visuel suivant",
+    "previous_slide": "Visuel précédent"
+  },
+  "products": {
+    "general": {
+      "sale": "Promotion",
+      "sold_out": "Épuisé",
+      "from_price_html": "À partir de {{ price }}"
+    },
+    "product": {
+      "add_to_cart": "Ajouter au panier",
+      "buy_it_now": "Acheter maintenant",
+      "sold_out": "Édition complète",
+      "unavailable": "Indisponible",
+      "quantity": "Quantité",
+      "vendor": "Maison",
+      "edition": "Édition limitée",
+      "pieces_remaining": "{{ count }} / {{ total }} pièces disponibles",
+      "low_stock": "Plus que quelques pièces",
+      "description": "Description",
+      "specifications": "Spécifications",
+      "share": "Partager"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "Panier",
+      "empty": "Votre panier est vide.",
+      "continue_shopping": "Poursuivre la collection",
+      "subtotal": "Sous-total",
+      "checkout": "Commander",
+      "remove": "Retirer",
+      "note": "Note de commande",
+      "taxes_and_shipping_at_checkout": "Taxes et livraison calculées au paiement."
+    }
+  },
+  "collections": {
+    "general": {
+      "view_all": "Voir toute la collection",
+      "no_matches": "Aucun produit ne correspond à votre sélection.",
+      "items_with_count": {
+        "one": "{{ count }} pièce",
+        "other": "{{ count }} pièces"
+      }
+    }
+  },
+  "blogs": {
+    "article": {
+      "read_more": "Lire la suite",
+      "posted_in": "Publié dans",
+      "tags": "Étiquettes",
+      "by_author": "par {{ author }}"
+    }
+  },
+  "customer": {
+    "account": {
+      "title": "Mon compte",
+      "details": "Mes coordonnées",
+      "view_addresses": "Voir les adresses",
+      "logout": "Se déconnecter"
+    },
+    "login": {
+      "title": "Connexion",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "sign_in": "Se connecter",
+      "forgot_password": "Mot de passe oublié ?",
+      "create_account": "Créer un compte"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "first_name": "Prénom",
+      "last_name": "Nom",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "submit": "Créer le compte"
+    }
+  },
+  "edition": {
+    "first_edition": "First Edition",
+    "elegance": "Élégance",
+    "limited_to": "Limitée à {{ count }} pièces",
+    "discover": "Découvrir l'édition",
+    "remaining": "Pièces restantes"
+  }
+}

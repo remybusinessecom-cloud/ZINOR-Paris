@@ -1,0 +1,31 @@
+{
+  "current": {
+    "color_background": "#0A0A0A",
+    "color_surface": "#141414",
+    "color_accent": "#C4956A",
+    "color_accent_secondary": "#1B2A4A",
+    "color_text": "#F5F0EB",
+    "type_base_size": 16,
+    "social_instagram_link": "",
+    "social_facebook_link": "",
+    "social_tiktok_link": "",
+    "edition_name": "First Edition — Élégance",
+    "edition_total_pieces": 100,
+    "edition_sold_pieces": 0,
+    "layout_container_max": 1400
+  },
+  "presets": {
+    "Default": {
+      "color_background": "#0A0A0A",
+      "color_surface": "#141414",
+      "color_accent": "#C4956A",
+      "color_accent_secondary": "#1B2A4A",
+      "color_text": "#F5F0EB",
+      "type_base_size": 16,
+      "edition_name": "First Edition — Élégance",
+      "edition_total_pieces": 100,
+      "edition_sold_pieces": 0,
+      "layout_container_max": 1400
+    }
+  }
+}
