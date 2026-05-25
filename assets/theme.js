@@ -140,45 +140,171 @@
 
       if (!mainImage || thumbs.length === 0) return;
 
+      // Transition CSS appliquée à l'image principale
+      mainImage.style.transition = 'opacity 300ms ease, transform 400ms ease-out';
+
+      // Fonction interne : active une miniature donnée et met à jour l'image principale
+      function activate(thumb) {
+        const newSrc = thumb.dataset.imageSrc;
+        const newAlt = thumb.dataset.imageAlt || '';
+        const newSrcset = thumb.dataset.imageSrcset || '';
+
+        if (!newSrc) return;
+
+        // Transition douce — fade out, swap, fade in
+        mainImage.style.opacity = '0';
+        setTimeout(function () {
+          mainImage.src = newSrc;
+          mainImage.alt = newAlt;
+          if (newSrcset) mainImage.srcset = newSrcset;
+          mainImage.style.opacity = '1';
+        }, 200);
+
+        // Mise à jour de l'état actif sur TOUTES les miniatures
+        // (synchronise les deux jeux : thumbs desktop + dots mobile via data-image-index)
+        const activeIndex = thumb.dataset.imageIndex;
+        thumbs.forEach(function (t) {
+          const isMatch = activeIndex != null && t.dataset.imageIndex === activeIndex;
+          if (isMatch || t === thumb) {
+            t.classList.add('is-active');
+            t.setAttribute('aria-selected', 'true');
+          } else {
+            t.classList.remove('is-active');
+            t.setAttribute('aria-selected', 'false');
+          }
+        });
+      }
+
+      // Clic sur une miniature
       thumbs.forEach(function (thumb) {
         thumb.addEventListener('click', function (event) {
           event.preventDefault();
-
-          const newSrc = thumb.dataset.imageSrc;
-          const newAlt = thumb.dataset.imageAlt || '';
-          const newSrcset = thumb.dataset.imageSrcset || '';
-
-          if (!newSrc) return;
-
-          // Transition douce — fade out, swap, fade in
-          mainImage.style.opacity = '0';
-
-          setTimeout(function () {
-            mainImage.src = newSrc;
-            mainImage.alt = newAlt;
-            if (newSrcset) mainImage.srcset = newSrcset;
-            mainImage.style.opacity = '1';
-          }, 200);
-
-          // Mise à jour de l'état actif sur les miniatures
-          thumbs.forEach(function (t) { t.classList.remove('is-active'); });
-          thumb.classList.add('is-active');
+          activate(thumb);
         });
       });
 
-      // Transition CSS appliquée à l'image principale
-      mainImage.style.transition = 'opacity 200ms ease';
+      // Navigation clavier — flèches gauche/droite dans les listes de miniatures
+      const thumbContainers = gallery.querySelectorAll('[data-gallery-thumbs], [data-gallery-dots]');
+      thumbContainers.forEach(function (container) {
+        container.addEventListener('keydown', function (event) {
+          if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+
+          // Ne joue que sur les miniatures de ce container
+          const localThumbs = Array.from(container.querySelectorAll('[data-gallery-thumb]'));
+          const currentIndex = localThumbs.indexOf(document.activeElement);
+          if (currentIndex === -1) return;
+
+          event.preventDefault();
+          let nextIndex = currentIndex;
+          if (event.key === 'ArrowRight') {
+            nextIndex = (currentIndex + 1) % localThumbs.length;
+          } else {
+            nextIndex = (currentIndex - 1 + localThumbs.length) % localThumbs.length;
+          }
+          localThumbs[nextIndex].focus();
+          activate(localThumbs[nextIndex]);
+        });
+      });
     });
   }
 
   /* ============================================================
-     5. INITIALISATION — au chargement du DOM
+     5. ACCORDÉON — sections déroulantes (fiche produit)
+     Structure attendue :
+       [data-accordion]
+         [data-accordion-item]
+           [data-accordion-trigger] (button avec aria-expanded)
+           [data-accordion-panel]
+     L'animation max-height est gérée en CSS (.is-open).
+     ============================================================ */
+  function initAccordion() {
+    const accordions = document.querySelectorAll('[data-accordion]');
+    if (accordions.length === 0) return;
+
+    accordions.forEach(function (accordion) {
+      const triggers = accordion.querySelectorAll('[data-accordion-trigger]');
+
+      triggers.forEach(function (trigger) {
+        trigger.addEventListener('click', function () {
+          const item = trigger.closest('[data-accordion-item]');
+          if (!item) return;
+
+          const isOpen = item.classList.contains('is-open');
+
+          // Bascule l'état — on ne ferme pas les autres (multi-ouvert autorisé)
+          if (isOpen) {
+            item.classList.remove('is-open');
+            trigger.setAttribute('aria-expanded', 'false');
+          } else {
+            item.classList.add('is-open');
+            trigger.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+    });
+  }
+
+  /* ============================================================
+     6. STICKY ATC — barre d'achat fixe en bas (mobile)
+     Apparaît quand le bouton ATC principal sort du viewport.
+     Le clic sur le bouton sticky déclenche la soumission du
+     formulaire principal [data-product-form].
+     ============================================================ */
+  function initStickyATC() {
+    const stickyBar = document.querySelector('[data-sticky-atc]');
+    const mainButton = document.querySelector('[data-atc-button]');
+    const mainForm = document.querySelector('[data-product-form]');
+    const stickyTrigger = document.querySelector('[data-sticky-atc-trigger]');
+
+    if (!stickyBar || !mainButton) return;
+
+    // IntersectionObserver — détecte la visibilité du bouton ATC principal
+    const observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          // Le bouton est visible → cache la barre sticky
+          stickyBar.classList.remove('is-visible');
+          stickyBar.setAttribute('aria-hidden', 'true');
+        } else {
+          // Le bouton est hors viewport → affiche la barre sticky
+          stickyBar.classList.add('is-visible');
+          stickyBar.setAttribute('aria-hidden', 'false');
+        }
+      });
+    }, {
+      // Marge négative pour déclencher juste après que le bouton sort
+      rootMargin: '0px 0px -10px 0px',
+      threshold: 0,
+    });
+
+    observer.observe(mainButton);
+
+    // Clic sur le bouton sticky → soumet le formulaire principal
+    if (stickyTrigger && mainForm) {
+      stickyTrigger.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (stickyTrigger.disabled) return;
+
+        // requestSubmit() respecte la validation HTML5 + déclenche l'event submit
+        if (typeof mainForm.requestSubmit === 'function') {
+          mainForm.requestSubmit();
+        } else {
+          mainForm.submit();
+        }
+      });
+    }
+  }
+
+  /* ============================================================
+     7. INITIALISATION — au chargement du DOM
      ============================================================ */
   function init() {
     initScrollAnimations();
     initStickyHeader();
     initStockCounter();
     initProductGallery();
+    initAccordion();
+    initStickyATC();
   }
 
   // On lance dès que possible — DOMContentLoaded ou immédiatement si déjà chargé

@@ -1,0 +1,915 @@
+{% comment %}
+  ============================================================
+  ZINOR PARIS — Section fiche produit
+  Page produit complète : galerie / informations / accordéon /
+  outro full-width / sticky ATC mobile.
+  Tous les contenus sont éditables via l'éditeur Shopify.
+  ============================================================
+{% endcomment %}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign low_stock_threshold = section.settings.low_stock_threshold | default: 20
+  assign show_low_stock = section.settings.show_low_stock_badge
+  assign accordion_open = section.settings.accordion_default_open | default: 'caracteristiques'
+-%}
+
+<section class="zinor-product" data-product-section>
+  <div class="zinor-product__container">
+    <div class="zinor-product__grid">
+
+      {# ============================================================
+         COLONNE GAUCHE — GALERIE PRODUIT
+         Desktop : miniatures verticales + image principale
+         Mobile  : image principale en haut, dots en bas
+         ============================================================ #}
+      <div class="zinor-product__gallery" data-product-gallery>
+        {# ----- Miniatures verticales (desktop) ----- #}
+        <div
+          class="zinor-product__thumbs"
+          data-gallery-thumbs
+          role="tablist"
+          aria-label="Visuels du produit"
+          aria-orientation="vertical">
+          {%- for image in product.images limit: 6 -%}
+            <button
+              type="button"
+              class="zinor-product__thumb{% if forloop.first %} is-active{% endif %}"
+              data-gallery-thumb
+              data-image-index="{{ forloop.index0 }}"
+              data-image-src="{{ image | image_url: width: 1200 }}"
+              data-image-alt="{{ image.alt | escape | default: product.title }}"
+              role="tab"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-label="Visuel {{ forloop.index }} sur {{ product.images.size }}">
+              {{
+                image
+                | image_url: width: 160
+                | image_tag:
+                  loading: 'lazy',
+                  width: 80,
+                  height: 80,
+                  alt: image.alt | default: product.title
+              }}
+            </button>
+          {%- endfor -%}
+        </div>
+
+        {# ----- Image principale ----- #}
+        <div class="zinor-product__main" data-gallery-main>
+          {%- if product.featured_image -%}
+            {{
+              product.featured_image
+              | image_url: width: 1600
+              | image_tag:
+                loading: 'eager',
+                fetchpriority: 'high',
+                widths: '400, 600, 900, 1200, 1600',
+                sizes: '(min-width: 1024px) 50vw, 100vw',
+                alt: product.featured_image.alt | default: product.title,
+                class: 'zinor-product__main-image'
+            }}
+          {%- endif -%}
+        </div>
+
+        {# ----- Dots (mobile uniquement, via CSS) ----- #}
+        <div
+          class="zinor-product__dots"
+          role="tablist"
+          aria-label="Navigation des visuels"
+          data-gallery-dots>
+          {%- for image in product.images limit: 6 -%}
+            <button
+              type="button"
+              class="zinor-product__dot{% if forloop.first %} is-active{% endif %}"
+              data-gallery-thumb
+              data-image-index="{{ forloop.index0 }}"
+              data-image-src="{{ image | image_url: width: 1200 }}"
+              data-image-alt="{{ image.alt | escape | default: product.title }}"
+              role="tab"
+              aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-label="Visuel {{ forloop.index }}"></button>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {# ============================================================
+         COLONNE DROITE — INFOS PRODUIT
+         Sticky sur desktop, normal sur mobile
+         ============================================================ #}
+      <div class="zinor-product__info">
+        <p class="zinor-product__label">ZINOR PARIS</p>
+
+        <h1 class="zinor-product__title">{{ product.title }}</h1>
+
+        <p class="zinor-product__subtitle">
+          {{ section.settings.product_subtitle | default: 'First Edition — Pièce numérotée' }}
+        </p>
+
+        <p class="zinor-product__price">{{ current_variant.price | money }}</p>
+
+        {# Badge de stock faible — conditionnel #}
+        {%- if show_low_stock
+          and current_variant.inventory_management != blank
+          and current_variant.inventory_quantity > 0
+          and current_variant.inventory_quantity <= low_stock_threshold
+        -%}
+          <div class="zinor-product__low-stock" role="status">
+            <span aria-hidden="true">⚡</span>
+            Plus que {{ current_variant.inventory_quantity }} pièces disponibles
+          </div>
+        {%- endif -%}
+
+        {# Séparateur fin rose gold #}
+        <hr class="zinor-product__divider" aria-hidden="true">
+
+        <div class="zinor-product__intro">
+          {{
+            section.settings.intro_text
+            | default: "<p>L'Élégance n'est pas un ornement. C'est une décision. Cadran soleil bleu nuit, finition rose gold, bracelet cuir grainé cognac, mouvement SEIKO VJ32 — chaque détail choisi pour durer.</p>"
+          }}
+        </div>
+
+        {# ----- FORMULAIRE ATC ----- #}
+        <form
+          method="post"
+          action="{{ routes.cart_add_url }}"
+          accept-charset="UTF-8"
+          enctype="multipart/form-data"
+          class="zinor-product__form"
+          data-product-form>
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+
+          <button
+            type="submit"
+            class="zinor-product__atc"
+            data-atc-button
+            {% unless product.available %}disabled{% endunless %}>
+            {%- if product.available -%}
+              {{ 'products.product.add_to_cart' | t | default: 'AJOUTER AU PANIER' }}
+            {%- else -%}
+              ÉPUISÉ
+            {%- endif -%}
+          </button>
+        </form>
+
+        <p class="zinor-product__reassurance">
+          Livraison offerte en France · Retours 30 jours
+        </p>
+
+        {# ============================================================
+           ACCORDÉON — 3 sections
+           ============================================================ #}
+        <div class="zinor-accordion" data-accordion>
+          {# --- Caractéristiques --- #}
+          <div
+            class="zinor-accordion__item{% if accordion_open == 'caracteristiques' %} is-open{% endif %}"
+            data-accordion-item>
+            <button
+              type="button"
+              class="zinor-accordion__header"
+              data-accordion-trigger
+              aria-expanded="{% if accordion_open == 'caracteristiques' %}true{% else %}false{% endif %}"
+              aria-controls="acc-panel-specs">
+              <span>Caractéristiques</span>
+              <span class="zinor-accordion__icon" aria-hidden="true"></span>
+            </button>
+            <div
+              class="zinor-accordion__panel"
+              id="acc-panel-specs"
+              data-accordion-panel
+              role="region">
+              <div class="zinor-accordion__content">
+                <ul class="zinor-product__specs">
+                  <li>Finition : Rose gold</li>
+                  <li>Diamètre : 40mm · Épaisseur : 7,8mm</li>
+                  <li>Cadran : Soleil bleu nuit, index bâtons rose gold</li>
+                  <li>Verre : Minéral traitement antireflet</li>
+                  <li>Mouvement : SEIKO VJ32 — Quartz Japon</li>
+                  <li>Fond de boîtier : Acier inoxydable 304L gravé</li>
+                  <li>Bracelet : Cuir grainé cognac, 20mm</li>
+                  <li>Boucle : Ardillon acier rose gold gravée "ZINOR"</li>
+                  <li>Couronne : Acier rose gold gravée "Z"</li>
+                  <li>Étanchéité : 3 ATM</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {# --- Édition & Livraison --- #}
+          <div
+            class="zinor-accordion__item{% if accordion_open == 'edition' %} is-open{% endif %}"
+            data-accordion-item>
+            <button
+              type="button"
+              class="zinor-accordion__header"
+              data-accordion-trigger
+              aria-expanded="{% if accordion_open == 'edition' %}true{% else %}false{% endif %}"
+              aria-controls="acc-panel-edition">
+              <span>Édition &amp; Livraison</span>
+              <span class="zinor-accordion__icon" aria-hidden="true"></span>
+            </button>
+            <div
+              class="zinor-accordion__panel"
+              id="acc-panel-edition"
+              data-accordion-panel
+              role="region">
+              <div class="zinor-accordion__content">
+                <p>Édition limitée stricte à 100 exemplaires, non renouvelée.</p>
+                <p>Chaque pièce numérotée individuellement.</p>
+                <p>Certificat d'authenticité ZINOR PARIS inclus.</p>
+                <p>Écrin premium noir et or.</p>
+                <p>Livraison offerte France (5–8 jours ouvrés).</p>
+                <p>International : tarifs et délais calculés au checkout.</p>
+                <p>Retours acceptés sous 30 jours, pièce non portée.</p>
+              </div>
+            </div>
+          </div>
+
+          {# --- Notre histoire --- #}
+          <div
+            class="zinor-accordion__item{% if accordion_open == 'histoire' %} is-open{% endif %}"
+            data-accordion-item>
+            <button
+              type="button"
+              class="zinor-accordion__header"
+              data-accordion-trigger
+              aria-expanded="{% if accordion_open == 'histoire' %}true{% else %}false{% endif %}"
+              aria-controls="acc-panel-history">
+              <span>Notre histoire</span>
+              <span class="zinor-accordion__icon" aria-hidden="true"></span>
+            </button>
+            <div
+              class="zinor-accordion__panel"
+              id="acc-panel-history"
+              data-accordion-panel
+              role="region">
+              <div class="zinor-accordion__content">
+                <p>ZINOR PARIS est né d'un refus : celui du superflu.</p>
+                <p>L'Élégance First Edition est notre première prise de position.</p>
+                <p>100 pièces. Un seul modèle. Une exigence absolue.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  {# ============================================================
+     OUTRO — pleine largeur avec image de fond fixe (desktop)
+     ============================================================ #}
+  <div
+    class="zinor-product__outro"
+    {% if section.settings.outro_image != blank %}
+      style="background-image: url('{{ section.settings.outro_image | image_url: width: 2400 }}');"
+    {% endif %}>
+    <div class="zinor-product__outro-overlay" aria-hidden="true"></div>
+    <div class="zinor-product__outro-inner fade-in">
+      <h2 class="zinor-product__outro-title">
+        {{ section.settings.outro_title | default: 'Une pièce pour ceux qui savent.' }}
+      </h2>
+      <p class="zinor-product__outro-subtitle">
+        {{ section.settings.outro_subtitle | default: 'Fabriquée pour durer. Conçue pour vous distinguer.' }}
+      </p>
+    </div>
+  </div>
+
+  {# ============================================================
+     STICKY ATC — visible sur mobile uniquement quand l'ATC
+     principal sort du viewport (toggle via JS)
+     ============================================================ #}
+  <div class="zinor-product__sticky-atc" data-sticky-atc aria-hidden="true">
+    <div class="zinor-product__sticky-atc-inner">
+      <p class="zinor-product__sticky-atc-price">{{ current_variant.price | money }}</p>
+      <button
+        type="button"
+        class="zinor-product__sticky-atc-btn"
+        data-sticky-atc-trigger
+        {% unless product.available %}disabled{% endunless %}>
+        {%- if product.available -%}Ajouter au panier{%- else -%}Épuisé{%- endif -%}
+      </button>
+    </div>
+  </div>
+</section>
+
+{# JSON-LD pour le SEO produit #}
+<script type="application/ld+json">
+  {{ product | structured_data }}
+</script>
+
+{# ============================================================
+   STYLES SCOPÉS
+   ============================================================ #}
+{% stylesheet %}
+  /* ========== CONTENEUR & GRID ========== */
+  .zinor-product {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    position: relative;
+  }
+
+  .zinor-product__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem; /* mobile : 40px 20px */
+  }
+
+  @media (min-width: 1024px) {
+    .zinor-product__container {
+      padding: 5rem 2.5rem; /* desktop : 80px 40px */
+    }
+  }
+
+  .zinor-product__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .zinor-product__grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+  }
+
+  /* ========== GALERIE ========== */
+  .zinor-product__gallery {
+    display: grid;
+    gap: 1rem;
+  }
+
+  /* Desktop : miniatures à gauche, image principale à droite */
+  @media (min-width: 1024px) {
+    .zinor-product__gallery {
+      grid-template-columns: 80px 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+  }
+
+  /* Miniatures verticales (desktop only) */
+  .zinor-product__thumbs {
+    display: none;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  @media (min-width: 1024px) {
+    .zinor-product__thumbs {
+      display: flex;
+    }
+  }
+
+  .zinor-product__thumb {
+    width: 80px;
+    height: 80px;
+    padding: 0;
+    background-color: var(--color-surface);
+    border: 1px solid transparent;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 200ms ease, opacity 200ms ease;
+    opacity: 0.7;
+  }
+
+  .zinor-product__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .zinor-product__thumb:hover,
+  .zinor-product__thumb:focus-visible {
+    opacity: 1;
+  }
+
+  .zinor-product__thumb.is-active {
+    border-color: var(--color-accent);
+    opacity: 1;
+  }
+
+  /* Image principale */
+  .zinor-product__main {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background-color: var(--color-surface);
+    overflow: hidden;
+  }
+
+  .zinor-product__main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: opacity 300ms ease, transform 400ms ease-out;
+  }
+
+  .zinor-product__main:hover .zinor-product__main-image {
+    transform: scale(1.05);
+  }
+
+  /* Dots mobile (cachés desktop) */
+  .zinor-product__dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 0 0;
+  }
+
+  @media (min-width: 1024px) {
+    .zinor-product__dots {
+      display: none;
+    }
+  }
+
+  .zinor-product__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: rgba(245, 240, 235, 0.3);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background-color 200ms ease, transform 200ms ease;
+  }
+
+  .zinor-product__dot:hover,
+  .zinor-product__dot.is-active {
+    background-color: var(--color-accent);
+    transform: scale(1.3);
+  }
+
+  /* ========== INFOS PRODUIT ========== */
+  .zinor-product__info {
+    padding-left: 0;
+  }
+
+  @media (min-width: 1024px) {
+    .zinor-product__info {
+      padding-left: 3.75rem; /* 60px */
+      position: sticky;
+      top: 100px;
+    }
+  }
+
+  .zinor-product__label {
+    font-family: var(--font-body);
+    font-size: 0.75rem; /* 12px */
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+  }
+
+  .zinor-product__title {
+    font-family: var(--font-heading);
+    font-size: 2rem; /* 32px mobile */
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-text);
+    margin: 0 0 0.75rem;
+  }
+
+  @media (min-width: 1024px) {
+    .zinor-product__title {
+      font-size: 3.25rem; /* 52px desktop */
+    }
+  }
+
+  .zinor-product__subtitle {
+    font-family: var(--font-body);
+    font-size: 0.875rem; /* 14px */
+    color: #888;
+    margin-bottom: 1.5rem;
+  }
+
+  .zinor-product__price {
+    font-family: var(--font-body);
+    font-size: 1.75rem; /* 28px */
+    font-weight: 400;
+    color: var(--color-text);
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+  }
+
+  /* Badge stock faible */
+  .zinor-product__low-stock {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(196, 149, 106, 0.15);
+    color: var(--color-accent);
+    padding: 0.5rem 1rem;
+    border-radius: 2px;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-top: 1rem;
+  }
+
+  /* Séparateur rose gold */
+  .zinor-product__divider {
+    width: 60px;
+    height: 1px;
+    background-color: var(--color-accent);
+    border: none;
+    margin: 2rem 0;
+  }
+
+  .zinor-product__intro {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text);
+    margin-bottom: 2.5rem;
+  }
+
+  .zinor-product__intro p {
+    margin: 0;
+  }
+
+  /* Bouton ATC principal */
+  .zinor-product__form {
+    margin-top: 2.5rem;
+  }
+
+  .zinor-product__atc {
+    width: 100%;
+    height: 56px;
+    background-color: var(--color-accent);
+    color: var(--color-background);
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 250ms ease, opacity 250ms ease;
+  }
+
+  .zinor-product__atc:hover:not(:disabled),
+  .zinor-product__atc:focus-visible:not(:disabled) {
+    background-color: #B58559; /* rose gold 10% plus sombre */
+  }
+
+  .zinor-product__atc:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .zinor-product__reassurance {
+    font-family: var(--font-body);
+    font-size: 0.75rem; /* 12px */
+    color: #888;
+    text-align: center;
+    margin-top: 1rem;
+  }
+
+  /* ========== ACCORDÉON ========== */
+  .zinor-accordion {
+    margin-top: 3rem; /* 48px */
+  }
+
+  .zinor-accordion__item {
+    border-bottom: 1px solid #1F1F1F;
+  }
+
+  .zinor-accordion__header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 0; /* 20px */
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-heading);
+    font-size: 1.125rem; /* 18px */
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    text-align: left;
+    transition: color 200ms ease;
+  }
+
+  .zinor-accordion__header:hover {
+    color: var(--color-accent);
+  }
+
+  /* Icône + / − (CSS pur, pas d'image) */
+  .zinor-accordion__icon {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .zinor-accordion__icon::before,
+  .zinor-accordion__icon::after {
+    content: '';
+    position: absolute;
+    background-color: currentColor;
+    transition: transform 300ms ease, opacity 300ms ease;
+  }
+
+  /* Trait horizontal (le "−") */
+  .zinor-accordion__icon::before {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    transform: translateY(-50%);
+  }
+
+  /* Trait vertical (forme le "+") */
+  .zinor-accordion__icon::after {
+    left: 50%;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    transform: translateX(-50%);
+  }
+
+  /* Quand ouvert : le trait vertical disparaît → reste un "−" */
+  .zinor-accordion__item.is-open .zinor-accordion__icon::after {
+    transform: translateX(-50%) scaleY(0);
+    opacity: 0;
+  }
+
+  /* Panneau — animation max-height pour la transition douce */
+  .zinor-accordion__panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 400ms ease;
+  }
+
+  .zinor-accordion__item.is-open .zinor-accordion__panel {
+    max-height: 1200px; /* assez large pour les contenus */
+  }
+
+  .zinor-accordion__content {
+    padding: 0.5rem 0 1.5rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem; /* 14px */
+    line-height: 1.8;
+    color: var(--color-text-muted);
+  }
+
+  .zinor-accordion__content p {
+    margin: 0 0 0.5rem;
+  }
+
+  .zinor-product__specs {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .zinor-product__specs li {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 2;
+    color: var(--color-text-muted);
+  }
+
+  /* ========== OUTRO ========== */
+  .zinor-product__outro {
+    position: relative;
+    background-color: #0F0F0F;
+    background-size: cover;
+    background-position: center;
+    padding: 7.5rem 1.5rem; /* 120px 0 */
+    text-align: center;
+    overflow: hidden;
+  }
+
+  /* Parallax/fixed sur desktop uniquement (pas mobile pour la perf iOS) */
+  @media (min-width: 1024px) {
+    .zinor-product__outro {
+      background-attachment: fixed;
+    }
+  }
+
+  .zinor-product__outro-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(10, 10, 10, 0.7);
+    z-index: 1;
+  }
+
+  .zinor-product__outro-inner {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .zinor-product__outro-title {
+    font-family: var(--font-heading);
+    font-size: 1.75rem; /* 28px mobile */
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-product__outro-title {
+      font-size: 2.5rem; /* 40px desktop */
+    }
+  }
+
+  .zinor-product__outro-subtitle {
+    font-family: var(--font-body);
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.6;
+    color: var(--color-text);
+    margin-top: 1.5rem;
+  }
+
+  /* ========== STICKY ATC (mobile only) ========== */
+  .zinor-product__sticky-atc {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 90;
+    background-color: rgba(10, 10, 10, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid #1F1F1F;
+    padding: 1rem 1.25rem;
+    transform: translateY(100%);
+    transition: transform 300ms ease;
+    pointer-events: none;
+  }
+
+  /* Visible uniquement quand .is-visible (toggled par JS) */
+  .zinor-product__sticky-atc.is-visible {
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  /* Désactivé sur desktop */
+  @media (min-width: 768px) {
+    .zinor-product__sticky-atc {
+      display: none;
+    }
+  }
+
+  .zinor-product__sticky-atc-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .zinor-product__sticky-atc-price {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .zinor-product__sticky-atc-btn {
+    background-color: var(--color-accent);
+    color: var(--color-background);
+    border: none;
+    padding: 0.875rem 1.5rem;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 250ms ease;
+  }
+
+  .zinor-product__sticky-atc-btn:hover:not(:disabled),
+  .zinor-product__sticky-atc-btn:focus-visible:not(:disabled) {
+    background-color: #B58559;
+  }
+
+  .zinor-product__sticky-atc-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Respect des préférences utilisateur */
+  @media (prefers-reduced-motion: reduce) {
+    .zinor-product__main-image,
+    .zinor-accordion__icon::before,
+    .zinor-accordion__icon::after,
+    .zinor-accordion__panel,
+    .zinor-product__sticky-atc {
+      transition: none;
+    }
+    .zinor-product__main:hover .zinor-product__main-image {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{# ============================================================
+   SCHEMA — paramètres éditables dans l'éditeur Shopify
+   ============================================================ #}
+{% schema %}
+{
+  "name": "Fiche produit",
+  "tag": "section",
+  "class": "zinor-product-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "INFORMATIONS"
+    },
+    {
+      "type": "text",
+      "id": "product_subtitle",
+      "label": "Sous-titre",
+      "default": "First Edition — Pièce numérotée"
+    },
+    {
+      "type": "richtext",
+      "id": "intro_text",
+      "label": "Texte d'introduction",
+      "default": "<p>L'Élégance n'est pas un ornement. C'est une décision. Cadran soleil bleu nuit, finition rose gold, bracelet cuir grainé cognac, mouvement SEIKO VJ32 — chaque détail choisi pour durer.</p>"
+    },
+
+    {
+      "type": "header",
+      "content": "STOCK FAIBLE"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_low_stock_badge",
+      "label": "Afficher le badge stock faible",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "low_stock_threshold",
+      "label": "Seuil de déclenchement",
+      "min": 1,
+      "max": 50,
+      "step": 1,
+      "default": 20,
+      "unit": "pcs"
+    },
+
+    {
+      "type": "header",
+      "content": "ACCORDÉON"
+    },
+    {
+      "type": "select",
+      "id": "accordion_default_open",
+      "label": "Section ouverte par défaut",
+      "options": [
+        { "value": "caracteristiques", "label": "Caractéristiques" },
+        { "value": "edition", "label": "Édition & Livraison" },
+        { "value": "histoire", "label": "Notre histoire" },
+        { "value": "none", "label": "Aucune" }
+      ],
+      "default": "caracteristiques"
+    },
+
+    {
+      "type": "header",
+      "content": "BAS DE PAGE (OUTRO)"
+    },
+    {
+      "type": "image_picker",
+      "id": "outro_image",
+      "label": "Image de fond"
+    },
+    {
+      "type": "text",
+      "id": "outro_title",
+      "label": "Titre",
+      "default": "Une pièce pour ceux qui savent."
+    },
+    {
+      "type": "text",
+      "id": "outro_subtitle",
+      "label": "Sous-titre",
+      "default": "Fabriquée pour durer. Conçue pour vous distinguer."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fiche produit ZINOR"
+    }
+  ]
+}
+{% endschema %}
