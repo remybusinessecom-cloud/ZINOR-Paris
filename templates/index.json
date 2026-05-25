@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "homepage": {
+      "type": "index",
+      "settings": {}
+    }
+  },
+  "order": ["homepage"]
+}
