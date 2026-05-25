@@ -125,40 +125,8 @@
       {{ content_for_layout }}
     </main>
 
-    {# ====== PIED DE PAGE — minimaliste ====== #}
-    <footer class="site-footer" role="contentinfo">
-      <div class="container site-footer__inner">
-        <div class="site-footer__brand">
-          <p class="site-footer__title">ZINOR <em>Paris</em></p>
-          <p class="site-footer__tagline">{{ 'general.footer.tagline' | t }}</p>
-        </div>
-
-        <div class="site-footer__columns">
-          {%- if linklists.footer.links.size > 0 -%}
-            <nav class="site-footer__nav" aria-label="{{ 'accessibility.footer_navigation' | t }}">
-              <ul class="site-footer__list">
-                {%- for link in linklists.footer.links -%}
-                  <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-                {%- endfor -%}
-              </ul>
-            </nav>
-          {%- endif -%}
-
-          {# Réseaux sociaux — Instagram principalement #}
-          {%- if settings.social_instagram_link != blank -%}
-            <div class="site-footer__social">
-              <a href="{{ settings.social_instagram_link }}" target="_blank" rel="noopener" aria-label="Instagram">
-                Instagram
-              </a>
-            </div>
-          {%- endif -%}
-        </div>
-
-        <div class="site-footer__legal">
-          <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }} — {{ 'general.footer.legal' | t }}</p>
-        </div>
-      </div>
-    </footer>
+    {# ====== PIED DE PAGE — section éditable ====== #}
+    {% section 'footer' %}
 
     {# Script principal du thème — defer pour ne pas bloquer le rendu #}
     <script src="{{ 'theme.js' | asset_url }}" defer></script>

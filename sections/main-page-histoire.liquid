@@ -1,0 +1,268 @@
+{% comment %}
+  ============================================================
+  ZINOR PARIS — Page "Notre histoire"
+  Structure éditoriale verticale : hero, image, texte,
+  signature, CTA collection.
+  Contenus éditables via le schema.
+  ============================================================
+{% endcomment %}
+
+<section class="zinor-histoire" aria-label="Notre histoire">
+  <div class="zinor-histoire__container">
+
+    {# ----- BLOC 1 — Hero éditorial ----- #}
+    <header class="zinor-histoire__hero fade-in">
+      <p class="zinor-histoire__eyebrow">
+        {{ section.settings.eyebrow | default: 'ZINOR PARIS' }}
+      </p>
+      <h1 class="zinor-histoire__title">
+        {{ section.settings.title | default: "L'élégance comme refus<br>du superflu." }}
+      </h1>
+    </header>
+
+    {# ----- BLOC 2 — Image pleine largeur ----- #}
+    {%- if section.settings.histoire_image != blank -%}
+      <figure class="zinor-histoire__media fade-in">
+        {{
+          section.settings.histoire_image
+          | image_url: width: 2000
+          | image_tag:
+            loading: 'lazy',
+            widths: '600, 900, 1200, 1600, 2000',
+            sizes: '(min-width: 768px) 900px, 100vw',
+            alt: section.settings.histoire_image.alt | default: 'ZINOR PARIS — Atelier'
+        }}
+      </figure>
+    {%- endif -%}
+
+    {# ----- BLOC 3 — Texte éditorial ----- #}
+    <article class="zinor-histoire__body fade-in">
+      {{
+        section.settings.histoire_texte
+        | default: "<p>ZINOR PARIS est née d'un constat simple. Dans un monde saturé d'objets, l'élégance n'a plus besoin de bruit. Elle se cherche ailleurs : dans la justesse d'une ligne, le poids d'une matière, la patience d'un geste.</p><p>Notre première pièce, l'Élégance First Edition, est conçue comme une déclaration. Cent montres, numérotées, fabriquées pour durer. Cadran soleil bleu nuit. Boîtier rose gold. Bracelet cuir grainé. Chaque détail est une décision.</p><p>Nous ne cherchons pas à équiper tout le monde. Nous cherchons à habiller ceux qui savent.</p>"
+      }}
+    </article>
+
+    {# ----- BLOC 4 — Signature ----- #}
+    <p class="zinor-histoire__signature fade-in">
+      {{ section.settings.signature_text | default: '— ZINOR PARIS, Paris' }}
+    </p>
+
+    {# ----- BLOC 5 — CTA collection ----- #}
+    {%- if section.settings.cta_text != blank -%}
+      <div class="zinor-histoire__cta-wrapper fade-in">
+        <a
+          href="{{ section.settings.cta_link | default: '/products/elegance' }}"
+          class="zinor-histoire__cta">
+          {{ section.settings.cta_text | default: "Découvrir l'Élégance" }}
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+{% stylesheet %}
+  .zinor-histoire {
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+
+  .zinor-histoire__container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3.75rem 1.25rem; /* 60px 20px mobile */
+  }
+
+  @media (min-width: 768px) {
+    .zinor-histoire__container {
+      padding: 7.5rem 2.5rem; /* 120px 40px desktop */
+    }
+  }
+
+  /* ----- Hero ----- */
+  .zinor-histoire__hero {
+    text-align: center;
+  }
+
+  .zinor-histoire__eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.75rem; /* 12px */
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0;
+  }
+
+  .zinor-histoire__title {
+    font-family: var(--font-heading);
+    font-size: 2.5rem; /* 40px mobile */
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--color-text);
+    margin-top: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-histoire__title {
+      font-size: 4rem; /* 64px desktop */
+    }
+  }
+
+  /* ----- Image ----- */
+  .zinor-histoire__media {
+    margin: 5rem 0;
+    aspect-ratio: 16 / 9;
+    min-height: 300px;
+    overflow: hidden;
+    background-color: var(--color-surface);
+  }
+
+  @media (min-width: 768px) {
+    .zinor-histoire__media {
+      min-height: 500px;
+    }
+  }
+
+  .zinor-histoire__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ----- Corps éditorial ----- */
+  .zinor-histoire__body {
+    font-family: var(--font-body);
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.9;
+    color: #E5E0DB;
+    font-weight: 300;
+  }
+
+  .zinor-histoire__body p {
+    margin-bottom: 1.75rem;
+  }
+
+  .zinor-histoire__body p:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ----- Signature ----- */
+  .zinor-histoire__signature {
+    margin-top: 5rem;
+    text-align: center;
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.25rem; /* 20px */
+    color: var(--color-accent);
+  }
+
+  /* ----- CTA ----- */
+  .zinor-histoire__cta-wrapper {
+    margin-top: 6.25rem; /* 100px */
+    text-align: center;
+  }
+
+  .zinor-histoire__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.125rem 3rem; /* 18px 48px */
+    background-color: transparent;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    font-family: var(--font-body);
+    font-size: 0.8125rem; /* 13px */
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 250ms ease, color 250ms ease;
+  }
+
+  .zinor-histoire__cta:hover,
+  .zinor-histoire__cta:focus-visible {
+    background-color: var(--color-accent);
+    color: var(--color-background);
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Page — Notre histoire",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "HERO"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Surtitre",
+      "default": "ZINOR PARIS"
+    },
+    {
+      "type": "richtext",
+      "id": "title",
+      "label": "Titre principal",
+      "default": "<p>L'élégance comme refus<br>du superflu.</p>"
+    },
+
+    {
+      "type": "header",
+      "content": "IMAGE"
+    },
+    {
+      "type": "image_picker",
+      "id": "histoire_image",
+      "label": "Image éditoriale (ratio 16:9)"
+    },
+
+    {
+      "type": "header",
+      "content": "TEXTE"
+    },
+    {
+      "type": "richtext",
+      "id": "histoire_texte",
+      "label": "Corps éditorial",
+      "default": "<p>ZINOR PARIS est née d'un constat simple. Dans un monde saturé d'objets, l'élégance n'a plus besoin de bruit. Elle se cherche ailleurs : dans la justesse d'une ligne, le poids d'une matière, la patience d'un geste.</p><p>Notre première pièce, l'Élégance First Edition, est conçue comme une déclaration. Cent montres, numérotées, fabriquées pour durer. Cadran soleil bleu nuit. Boîtier rose gold. Bracelet cuir grainé. Chaque détail est une décision.</p><p>Nous ne cherchons pas à équiper tout le monde. Nous cherchons à habiller ceux qui savent.</p>"
+    },
+
+    {
+      "type": "header",
+      "content": "SIGNATURE"
+    },
+    {
+      "type": "text",
+      "id": "signature_text",
+      "label": "Texte de signature",
+      "default": "— ZINOR PARIS, Paris"
+    },
+
+    {
+      "type": "header",
+      "content": "CTA"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Libellé du bouton",
+      "default": "Découvrir l'Élégance"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Lien du bouton"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page — Notre histoire"
+    }
+  ]
+}
+{% endschema %}

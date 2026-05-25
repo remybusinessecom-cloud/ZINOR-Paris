@@ -1,0 +1,383 @@
+{% comment %}
+  ============================================================
+  ZINOR PARIS — Page "Contact"
+  Layout 2 colonnes 40/60 : coordonnées + formulaire Shopify.
+  Utilise {% form 'contact' %} natif.
+  ============================================================
+{% endcomment %}
+
+<section class="zinor-contact" aria-label="Contact">
+  <div class="zinor-contact__container">
+    <div class="zinor-contact__grid">
+
+      {# ============================================================
+         COLONNE GAUCHE — Coordonnées (40%)
+         ============================================================ #}
+      <div class="zinor-contact__info fade-in">
+        <h1 class="zinor-contact__title">
+          {{ section.settings.title | default: 'Écrire à ZINOR PARIS' }}
+        </h1>
+
+        <p class="zinor-contact__intro">
+          {{
+            section.settings.intro
+            | default: "Pour toute question concernant votre commande, l'édition limitée, ou pour échanger sur nos pièces, nous répondons sous 24 heures."
+          }}
+        </p>
+
+        <ul class="zinor-contact__list">
+          {%- if section.settings.email != blank -%}
+            <li class="zinor-contact__list-item">
+              <span class="zinor-contact__list-label">Email</span>
+              <a class="zinor-contact__list-value" href="mailto:{{ section.settings.email }}">
+                {{ section.settings.email }}
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- if section.settings.instagram_handle != blank -%}
+            <li class="zinor-contact__list-item">
+              <span class="zinor-contact__list-label">Instagram</span>
+              <a
+                class="zinor-contact__list-value"
+                href="{{ section.settings.instagram_url | default: 'https://instagram.com/zinor.paris' }}"
+                target="_blank"
+                rel="noopener">
+                {{ section.settings.instagram_handle }}
+              </a>
+            </li>
+          {%- endif -%}
+
+          {%- if section.settings.location != blank -%}
+            <li class="zinor-contact__list-item">
+              <span class="zinor-contact__list-label">Basée à</span>
+              <span class="zinor-contact__list-value">{{ section.settings.location }}</span>
+            </li>
+          {%- endif -%}
+        </ul>
+      </div>
+
+      {# ============================================================
+         COLONNE DROITE — Formulaire Shopify (60%)
+         ============================================================ #}
+      <div class="zinor-contact__form-wrapper fade-in">
+        {%- form 'contact', class: 'zinor-contact__form' -%}
+
+          {%- if form.posted_successfully? -%}
+            <div class="zinor-contact__success" role="status">
+              {{ 'contact.form.success' | t | default: 'Merci. Votre message a bien été envoyé. Nous revenons vers vous sous 24 heures.' }}
+            </div>
+          {%- endif -%}
+
+          {%- if form.errors -%}
+            <div class="zinor-contact__errors" role="alert">
+              {%- for field in form.errors -%}
+                <p>{{ form.errors.messages[field] }}</p>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          <div class="zinor-contact__field">
+            <label for="contact-name" class="zinor-contact__label">Nom</label>
+            <input
+              type="text"
+              id="contact-name"
+              name="contact[name]"
+              class="zinor-contact__input"
+              autocomplete="name"
+              required
+              value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}">
+          </div>
+
+          <div class="zinor-contact__field">
+            <label for="contact-email" class="zinor-contact__label">Email</label>
+            <input
+              type="email"
+              id="contact-email"
+              name="contact[email]"
+              class="zinor-contact__input"
+              autocomplete="email"
+              required
+              value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}">
+          </div>
+
+          <div class="zinor-contact__field">
+            <label for="contact-subject" class="zinor-contact__label">Sujet</label>
+            <select
+              id="contact-subject"
+              name="contact[subject]"
+              class="zinor-contact__input zinor-contact__select"
+              required>
+              <option value="Commande">Commande</option>
+              <option value="Édition limitée">Édition limitée</option>
+              <option value="Presse">Presse</option>
+              <option value="Autre">Autre</option>
+            </select>
+          </div>
+
+          <div class="zinor-contact__field">
+            <label for="contact-message" class="zinor-contact__label">Message</label>
+            <textarea
+              id="contact-message"
+              name="contact[body]"
+              class="zinor-contact__input zinor-contact__textarea"
+              rows="6"
+              required>{% if form.body %}{{ form.body }}{% endif %}</textarea>
+          </div>
+
+          <button type="submit" class="zinor-contact__submit">
+            Envoyer le message
+          </button>
+
+        {%- endform -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .zinor-contact {
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+
+  .zinor-contact__container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3.75rem 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-contact__container {
+      padding: 7.5rem 2.5rem;
+    }
+  }
+
+  .zinor-contact__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    .zinor-contact__grid {
+      grid-template-columns: 40fr 60fr;
+      gap: 5rem;
+    }
+  }
+
+  /* ----- Colonne gauche ----- */
+  .zinor-contact__title {
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-contact__title {
+      font-size: 2.5rem; /* 40px */
+    }
+  }
+
+  .zinor-contact__intro {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-text-muted);
+    margin-top: 1.5rem;
+    max-width: 36ch;
+  }
+
+  .zinor-contact__list {
+    list-style: none;
+    margin-top: 3rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .zinor-contact__list-label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .zinor-contact__list-value {
+    font-family: var(--font-body);
+    font-size: 1rem; /* 16px */
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+
+  a.zinor-contact__list-value:hover {
+    color: var(--color-accent);
+  }
+
+  /* ----- Formulaire ----- */
+  .zinor-contact__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .zinor-contact__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .zinor-contact__label {
+    font-family: var(--font-body);
+    font-size: 0.75rem; /* 12px */
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .zinor-contact__input {
+    width: 100%;
+    background-color: var(--color-surface);
+    border: 1px solid #1F1F1F;
+    color: var(--color-text);
+    padding: 1rem 1.25rem; /* 16px 20px */
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: border-color 200ms ease;
+    border-radius: 0;
+  }
+
+  .zinor-contact__input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+
+  .zinor-contact__select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--color-accent) 50%),
+                      linear-gradient(135deg, var(--color-accent) 50%, transparent 50%);
+    background-position: calc(100% - 22px) 50%, calc(100% - 16px) 50%;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+    padding-right: 2.5rem;
+  }
+
+  .zinor-contact__textarea {
+    resize: vertical;
+    min-height: 150px;
+    font-family: var(--font-body);
+  }
+
+  .zinor-contact__submit {
+    width: 100%;
+    background-color: var(--color-accent);
+    color: var(--color-background);
+    border: none;
+    padding: 1.125rem; /* 18px */
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 250ms ease;
+    margin-top: 0.5rem;
+  }
+
+  .zinor-contact__submit:hover,
+  .zinor-contact__submit:focus-visible {
+    background-color: #B58559;
+  }
+
+  /* ----- Messages succès / erreur ----- */
+  .zinor-contact__success {
+    background-color: rgba(196, 149, 106, 0.15);
+    color: var(--color-accent);
+    padding: 1rem 1.25rem;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    border-left: 2px solid var(--color-accent);
+  }
+
+  .zinor-contact__errors {
+    background-color: rgba(196, 80, 80, 0.12);
+    color: #E5A0A0;
+    padding: 1rem 1.25rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    border-left: 2px solid #C45050;
+  }
+
+  .zinor-contact__errors p {
+    margin: 0;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Page — Contact",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "TEXTES"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "Écrire à ZINOR PARIS"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "Texte d'introduction",
+      "default": "Pour toute question concernant votre commande, l'édition limitée, ou pour échanger sur nos pièces, nous répondons sous 24 heures."
+    },
+
+    {
+      "type": "header",
+      "content": "COORDONNÉES"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Email",
+      "default": "contact@zinor-paris.com"
+    },
+    {
+      "type": "text",
+      "id": "instagram_handle",
+      "label": "Handle Instagram",
+      "default": "@zinor.paris"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "URL Instagram"
+    },
+    {
+      "type": "text",
+      "id": "location",
+      "label": "Localisation",
+      "default": "Paris, France"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Page — Contact"
+    }
+  ]
+}
+{% endschema %}

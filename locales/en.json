@@ -116,5 +116,47 @@
     "limited_to": "Limited to {{ count }} pieces",
     "discover": "Discover the edition",
     "remaining": "Pieces remaining"
+  },
+  "contact": {
+    "form": {
+      "name": "Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "submit": "Send message",
+      "success": "Thank you. Your message has been sent. We will get back to you within 24 hours.",
+      "subjects": {
+        "order": "Order",
+        "edition": "Limited edition",
+        "press": "Press",
+        "other": "Other"
+      }
+    },
+    "labels": {
+      "email": "Email",
+      "instagram": "Instagram",
+      "location": "Based in"
+    }
+  },
+  "newsletter": {
+    "title": "Join the circle",
+    "subtitle": "Next editions, in preview.",
+    "placeholder": "your@email.com",
+    "submit": "Subscribe",
+    "success": "Thank you. You are now part of the circle."
+  },
+  "footer": {
+    "columns": {
+      "boutique": "Boutique",
+      "maison": "Maison",
+      "service": "Service"
+    },
+    "copyright": "All rights reserved.",
+    "language": "Language"
+  },
+  "histoire": {
+    "eyebrow": "ZINOR PARIS",
+    "signature": "— ZINOR PARIS, Paris",
+    "cta": "Discover Élégance"
   }
 }

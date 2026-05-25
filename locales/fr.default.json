@@ -116,5 +116,47 @@
     "limited_to": "Limitée à {{ count }} pièces",
     "discover": "Découvrir l'édition",
     "remaining": "Pièces restantes"
+  },
+  "contact": {
+    "form": {
+      "name": "Nom",
+      "email": "Email",
+      "subject": "Sujet",
+      "message": "Message",
+      "submit": "Envoyer le message",
+      "success": "Merci. Votre message a bien été envoyé. Nous revenons vers vous sous 24 heures.",
+      "subjects": {
+        "order": "Commande",
+        "edition": "Édition limitée",
+        "press": "Presse",
+        "other": "Autre"
+      }
+    },
+    "labels": {
+      "email": "Email",
+      "instagram": "Instagram",
+      "location": "Basée à"
+    }
+  },
+  "newsletter": {
+    "title": "Rejoindre le cercle",
+    "subtitle": "Les prochaines éditions, en avant-première.",
+    "placeholder": "votre@email.com",
+    "submit": "S'inscrire",
+    "success": "Merci. Vous êtes inscrit·e au cercle."
+  },
+  "footer": {
+    "columns": {
+      "boutique": "Boutique",
+      "maison": "Maison",
+      "service": "Service"
+    },
+    "copyright": "Tous droits réservés.",
+    "language": "Langue"
+  },
+  "histoire": {
+    "eyebrow": "ZINOR PARIS",
+    "signature": "— ZINOR PARIS, Paris",
+    "cta": "Découvrir l'Élégance"
   }
 }

@@ -1,0 +1,513 @@
+{% comment %}
+  ============================================================
+  ZINOR PARIS — Footer global
+  4 colonnes desktop (identité / boutique / maison / service)
+  + bloc newsletter pleine largeur
+  + bottom bar copyright et sélecteur de langue
+  ============================================================
+{% endcomment %}
+
+<footer class="zinor-footer" role="contentinfo">
+  <div class="zinor-footer__container">
+
+    {# ============================================================
+       4 COLONNES PRINCIPALES
+       ============================================================ #}
+    <div class="zinor-footer__grid">
+
+      {# COL 1 — Identité #}
+      <div class="zinor-footer__col zinor-footer__col--brand">
+        <p class="zinor-footer__logo">
+          {{ section.settings.brand_name | default: 'ZINOR PARIS' }}
+        </p>
+        <p class="zinor-footer__tagline">
+          {{
+            section.settings.brand_tagline
+            | default: "L'élégance, distillée.<br>Paris · Édition Limitée · Depuis 2024"
+          }}
+        </p>
+      </div>
+
+      {# COL 2 — Boutique #}
+      <div class="zinor-footer__col">
+        <h3 class="zinor-footer__col-title">
+          {{ section.settings.col_2_title | default: 'Boutique' }}
+        </h3>
+        {%- if linklists[section.settings.col_2_menu].links.size > 0 -%}
+          <ul class="zinor-footer__links">
+            {%- for link in linklists[section.settings.col_2_menu].links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        {%- else -%}
+          {# Liens par défaut si aucun menu sélectionné #}
+          <ul class="zinor-footer__links">
+            <li><a href="/collections/elegance">Collection Élégance</a></li>
+            <li><a href="/products/elegance">First Edition</a></li>
+            <li><a href="/pages/bientot">Bientôt disponibles</a></li>
+          </ul>
+        {%- endif -%}
+      </div>
+
+      {# COL 3 — Maison #}
+      <div class="zinor-footer__col">
+        <h3 class="zinor-footer__col-title">
+          {{ section.settings.col_3_title | default: 'Maison' }}
+        </h3>
+        {%- if linklists[section.settings.col_3_menu].links.size > 0 -%}
+          <ul class="zinor-footer__links">
+            {%- for link in linklists[section.settings.col_3_menu].links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        {%- else -%}
+          <ul class="zinor-footer__links">
+            <li><a href="/pages/notre-histoire">Notre histoire</a></li>
+            <li><a href="/pages/atelier">Atelier</a></li>
+            <li><a href="/pages/presse">Presse</a></li>
+            {%- if settings.social_instagram_link != blank -%}
+              <li>
+                <a href="{{ settings.social_instagram_link }}" target="_blank" rel="noopener">
+                  Instagram
+                </a>
+              </li>
+            {%- else -%}
+              <li><a href="https://instagram.com/zinor.paris" target="_blank" rel="noopener">Instagram</a></li>
+            {%- endif -%}
+          </ul>
+        {%- endif -%}
+      </div>
+
+      {# COL 4 — Service #}
+      <div class="zinor-footer__col">
+        <h3 class="zinor-footer__col-title">
+          {{ section.settings.col_4_title | default: 'Service' }}
+        </h3>
+        {%- if linklists[section.settings.col_4_menu].links.size > 0 -%}
+          <ul class="zinor-footer__links">
+            {%- for link in linklists[section.settings.col_4_menu].links -%}
+              <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+            {%- endfor -%}
+          </ul>
+        {%- else -%}
+          <ul class="zinor-footer__links">
+            <li><a href="/pages/contact">Contact</a></li>
+            <li><a href="/pages/livraison">Livraison &amp; Retours</a></li>
+            <li><a href="/pages/garantie">Garantie</a></li>
+            <li><a href="/pages/cgv">CGV</a></li>
+            <li><a href="/pages/mentions-legales">Mentions légales</a></li>
+          </ul>
+        {%- endif -%}
+      </div>
+
+    </div>
+
+    {# ============================================================
+       BLOC NEWSLETTER — pleine largeur
+       ============================================================ #}
+    <div class="zinor-footer__newsletter">
+      <div class="zinor-footer__newsletter-text">
+        <p class="zinor-footer__newsletter-title">
+          {{ section.settings.newsletter_title | default: 'Rejoindre le cercle' }}
+        </p>
+        <p class="zinor-footer__newsletter-subtitle">
+          {{
+            section.settings.newsletter_subtitle
+            | default: 'Les prochaines éditions, en avant-première.'
+          }}
+        </p>
+      </div>
+      <div class="zinor-footer__newsletter-form">
+        {% render 'newsletter-form' %}
+      </div>
+    </div>
+
+    {# ============================================================
+       BOTTOM BAR — copyright + sélecteur de langue
+       ============================================================ #}
+    <div class="zinor-footer__bottom">
+      <p class="zinor-footer__copyright">
+        &copy; {{ 'now' | date: '%Y' }} {{ section.settings.brand_name | default: 'ZINOR PARIS' }}.
+        {{ section.settings.copyright_text | default: 'Tous droits réservés.' }}
+      </p>
+
+      {# Sélecteur de langue — uniquement si plusieurs locales actives #}
+      {%- if localization.available_locales.size > 1 -%}
+        <form method="post" action="{{ routes.root_url }}/localization" class="zinor-footer__locale-form">
+          <input type="hidden" name="_method" value="put">
+          <input type="hidden" name="return_to" value="{{ request.path }}">
+          <label for="footer-locale" class="visually-hidden">Langue</label>
+          <select
+            id="footer-locale"
+            name="locale_code"
+            class="zinor-footer__locale-select"
+            onchange="this.form.submit()">
+            {%- for locale in localization.available_locales -%}
+              <option
+                value="{{ locale.iso_code }}"
+                {%- if locale.iso_code == localization.language.iso_code %} selected{% endif -%}>
+                {{ locale.endonym_name | capitalize }}
+              </option>
+            {%- endfor -%}
+          </select>
+        </form>
+      {%- endif -%}
+    </div>
+
+  </div>
+</footer>
+
+{% stylesheet %}
+  .zinor-footer {
+    background-color: #080808;
+    border-top: 1px solid #1F1F1F;
+    color: var(--color-text);
+  }
+
+  .zinor-footer__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3.75rem 1.25rem 1.875rem; /* 60px 20px 30px mobile */
+  }
+
+  @media (min-width: 768px) {
+    .zinor-footer__container {
+      padding: 5rem 2.5rem 2.5rem; /* 80px 40px 40px desktop */
+    }
+  }
+
+  /* ----- 4 colonnes ----- */
+  .zinor-footer__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-footer__grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .zinor-footer__grid {
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 3.75rem; /* 60px */
+    }
+  }
+
+  /* ----- Col 1 — Identité ----- */
+  .zinor-footer__logo {
+    font-family: var(--font-heading);
+    font-size: 1.5rem; /* 24px */
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0;
+  }
+
+  .zinor-footer__tagline {
+    font-family: var(--font-body);
+    font-size: 0.8125rem; /* 13px */
+    line-height: 1.7;
+    color: #888;
+    margin-top: 1rem;
+  }
+
+  /* ----- Cols 2-4 ----- */
+  .zinor-footer__col-title {
+    font-family: var(--font-body);
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0 0 1.25rem;
+  }
+
+  .zinor-footer__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* 12px */
+  }
+
+  .zinor-footer__links a {
+    font-family: var(--font-body);
+    font-size: 0.875rem; /* 14px */
+    color: #B0B0B0;
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+
+  .zinor-footer__links a:hover,
+  .zinor-footer__links a:focus-visible {
+    color: var(--color-accent);
+  }
+
+  /* ============================================================
+     NEWSLETTER
+     ============================================================ */
+  .zinor-footer__newsletter {
+    margin-top: 3.75rem;
+    padding: 2.5rem 0;
+    border-top: 1px solid #1F1F1F;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-footer__newsletter {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 3rem;
+    }
+  }
+
+  .zinor-footer__newsletter-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem; /* 24px */
+    font-weight: 400;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .zinor-footer__newsletter-subtitle {
+    font-family: var(--font-body);
+    font-size: 0.8125rem; /* 13px */
+    color: #888;
+    margin-top: 0.5rem;
+  }
+
+  /* Newsletter form (snippet) */
+  .zinor-newsletter__form {
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-footer__newsletter-form {
+      flex: 0 1 420px;
+    }
+  }
+
+  .zinor-newsletter__group {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--color-accent);
+  }
+
+  .zinor-newsletter__input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--color-text);
+    padding: 0.75rem 0;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    outline: none;
+  }
+
+  .zinor-newsletter__input::placeholder {
+    color: #888;
+  }
+
+  .zinor-newsletter__submit {
+    background: transparent;
+    border: none;
+    color: var(--color-accent);
+    padding: 0.5rem 1rem;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 250ms ease, color 250ms ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .zinor-newsletter__submit:hover,
+  .zinor-newsletter__submit:focus-visible {
+    background-color: var(--color-accent);
+    color: var(--color-background);
+  }
+
+  .zinor-newsletter__success {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--color-accent);
+    margin: 0;
+  }
+
+  .zinor-newsletter__error {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: #E5A0A0;
+    margin: 0.5rem 0 0;
+  }
+
+  /* ============================================================
+     BOTTOM BAR
+     ============================================================ */
+  .zinor-footer__bottom {
+    margin-top: 2.5rem;
+    padding-top: 1.875rem; /* 30px */
+    border-top: 1px solid #1F1F1F;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-footer__bottom {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .zinor-footer__copyright {
+    font-family: var(--font-body);
+    font-size: 0.75rem; /* 12px */
+    color: #666;
+    margin: 0;
+  }
+
+  .zinor-footer__locale-select {
+    background-color: transparent;
+    border: 1px solid #1F1F1F;
+    color: #B0B0B0;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    padding: 0.5rem 1.5rem 0.5rem 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--color-accent) 50%),
+                      linear-gradient(135deg, var(--color-accent) 50%, transparent 50%);
+    background-position: calc(100% - 14px) 50%, calc(100% - 10px) 50%;
+    background-size: 4px 4px, 4px 4px;
+    background-repeat: no-repeat;
+    transition: border-color 200ms ease, color 200ms ease;
+  }
+
+  .zinor-footer__locale-select:hover,
+  .zinor-footer__locale-select:focus-visible {
+    border-color: var(--color-accent);
+    color: var(--color-text);
+    outline: none;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Footer",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "IDENTITÉ"
+    },
+    {
+      "type": "text",
+      "id": "brand_name",
+      "label": "Nom de la marque",
+      "default": "ZINOR PARIS"
+    },
+    {
+      "type": "richtext",
+      "id": "brand_tagline",
+      "label": "Tagline",
+      "default": "<p>L'élégance, distillée.<br>Paris · Édition Limitée · Depuis 2024</p>"
+    },
+
+    {
+      "type": "header",
+      "content": "COLONNE BOUTIQUE"
+    },
+    {
+      "type": "text",
+      "id": "col_2_title",
+      "label": "Titre",
+      "default": "Boutique"
+    },
+    {
+      "type": "link_list",
+      "id": "col_2_menu",
+      "label": "Menu",
+      "info": "Sélectionner un menu Shopify ou laisser vide pour les liens par défaut"
+    },
+
+    {
+      "type": "header",
+      "content": "COLONNE MAISON"
+    },
+    {
+      "type": "text",
+      "id": "col_3_title",
+      "label": "Titre",
+      "default": "Maison"
+    },
+    {
+      "type": "link_list",
+      "id": "col_3_menu",
+      "label": "Menu"
+    },
+
+    {
+      "type": "header",
+      "content": "COLONNE SERVICE"
+    },
+    {
+      "type": "text",
+      "id": "col_4_title",
+      "label": "Titre",
+      "default": "Service"
+    },
+    {
+      "type": "link_list",
+      "id": "col_4_menu",
+      "label": "Menu"
+    },
+
+    {
+      "type": "header",
+      "content": "NEWSLETTER"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_title",
+      "label": "Titre",
+      "default": "Rejoindre le cercle"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_subtitle",
+      "label": "Sous-titre",
+      "default": "Les prochaines éditions, en avant-première."
+    },
+
+    {
+      "type": "header",
+      "content": "COPYRIGHT"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "Mention",
+      "default": "Tous droits réservés."
+    }
+  ]
+}
+{% endschema %}
