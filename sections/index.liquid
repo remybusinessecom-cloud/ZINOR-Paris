@@ -41,7 +41,7 @@
   <div class="zinor-hero__overlay" aria-hidden="true"></div>
 
   <div class="container zinor-hero__inner">
-    <div class="zinor-hero__content fade-in">
+    <div class="zinor-hero__content">
       <p class="zinor-hero__eyebrow">
         {{ section.settings.hero_eyebrow | default: 'FIRST EDITION — 100 PIÈCES' }}
       </p>
@@ -296,7 +296,9 @@
    STYLES SCOPÉS À LA SECTION
    ============================================================ {% endcomment %}
 {% stylesheet %}
-  /* ========== HERO ========== */
+  /* ========== HERO ==========
+     Layering : image (z-1) → overlay (z-2) → contenu (z-3)
+     ========================================================= */
   .zinor-hero {
     position: relative;
     min-height: 100vh;
@@ -304,44 +306,63 @@
     align-items: center;
     overflow: hidden;
     color: var(--color-text);
+    background-color: var(--color-background); /* fallback si pas d'image */
+    isolation: isolate; /* nouveau stacking context propre */
   }
 
+  /* Image de fond — couche la plus basse */
   .zinor-hero__media {
     position: absolute;
-    inset: 0;
-    z-index: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
   }
 
   .zinor-hero__media img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center;
+    display: block;
   }
 
-  /* Dégradé gauche → droite pour la lisibilité */
+  /* Overlay dégradé gauche → droite pour garantir la lisibilité du texte */
   .zinor-hero__overlay {
     position: absolute;
-    inset: 0;
-    z-index: 1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
     background: linear-gradient(
       90deg,
       rgba(10, 10, 10, 0.85) 0%,
-      rgba(10, 10, 10, 0.65) 40%,
-      rgba(10, 10, 10, 0.2) 80%,
+      rgba(10, 10, 10, 0.4) 60%,
       transparent 100%
     );
   }
 
+  /* Conteneur du texte — couche la plus haute, au-dessus de tout */
   .zinor-hero__inner {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     width: 100%;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
   }
 
   .zinor-hero__content {
     max-width: 600px;
     text-align: left;
+    /* text-shadow subtil — sécurise la lisibilité sur images claires */
+    text-shadow: 0 1px 24px rgba(0, 0, 0, 0.35);
   }
 
   .zinor-hero__eyebrow {
@@ -352,6 +373,7 @@
     text-transform: uppercase;
     color: var(--color-accent);
     margin-bottom: 1.5rem;
+    text-shadow: none; /* le rose gold suffit, pas besoin d'ombre */
   }
 
   .zinor-hero__title {
@@ -361,6 +383,7 @@
     font-weight: 400;
     margin-bottom: 1.5rem;
     letter-spacing: 0.01em;
+    color: var(--color-text);
   }
 
   .zinor-hero__subtitle {
@@ -375,6 +398,10 @@
 
   .zinor-hero__cta {
     margin-top: 0.5rem;
+    text-shadow: none;
+    /* assure que le CTA passe au-dessus de tout overlay résiduel */
+    position: relative;
+    z-index: 1;
   }
 
   @media (min-width: 768px) {
