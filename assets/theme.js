@@ -209,6 +209,79 @@
   }
 
   /* ============================================================
+     4b. GALERIE PRODUIT PHARE (homepage) — empilement absolu
+     Les 4 images sont rendues en position absolue, superposées.
+     Cliquer sur un dot bascule la classe .is-active sur l'image
+     et le dot correspondants (transition opacity gérée en CSS).
+     Structure attendue :
+       [data-featured-gallery]
+         [data-featured-image data-image-index="N"]
+         [data-featured-dot   data-image-index="N"]
+     ============================================================ */
+  function initFeaturedGallery() {
+    const galleries = document.querySelectorAll('[data-featured-gallery]');
+    if (galleries.length === 0) return;
+
+    galleries.forEach(function (gallery) {
+      const images = gallery.querySelectorAll('[data-featured-image]');
+      const dots = gallery.querySelectorAll('[data-featured-dot]');
+
+      if (images.length === 0 || dots.length === 0) return;
+
+      // Active une paire image + dot via leur data-image-index
+      function activate(index) {
+        const target = String(index);
+
+        images.forEach(function (img) {
+          if (img.dataset.imageIndex === target) {
+            img.classList.add('is-active');
+          } else {
+            img.classList.remove('is-active');
+          }
+        });
+
+        dots.forEach(function (dot) {
+          if (dot.dataset.imageIndex === target) {
+            dot.classList.add('is-active');
+            dot.setAttribute('aria-selected', 'true');
+          } else {
+            dot.classList.remove('is-active');
+            dot.setAttribute('aria-selected', 'false');
+          }
+        });
+      }
+
+      // Clic sur un dot — swap immédiat
+      dots.forEach(function (dot) {
+        dot.addEventListener('click', function () {
+          const index = parseInt(dot.dataset.imageIndex, 10);
+          if (!Number.isNaN(index)) activate(index);
+        });
+      });
+
+      // Navigation clavier — flèches gauche / droite quand un dot a le focus
+      gallery.addEventListener('keydown', function (event) {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+
+        const dotsArray = Array.from(dots);
+        const focusedIndex = dotsArray.indexOf(document.activeElement);
+        if (focusedIndex === -1) return; // pas sur un dot, on ignore
+
+        event.preventDefault();
+        let nextIndex;
+        if (event.key === 'ArrowRight') {
+          nextIndex = (focusedIndex + 1) % dotsArray.length;
+        } else {
+          nextIndex = (focusedIndex - 1 + dotsArray.length) % dotsArray.length;
+        }
+        dotsArray[nextIndex].focus();
+        const targetIndex = parseInt(dotsArray[nextIndex].dataset.imageIndex, 10);
+        if (!Number.isNaN(targetIndex)) activate(targetIndex);
+      });
+    });
+  }
+
+  /* ============================================================
      5. ACCORDÉON — sections déroulantes (fiche produit)
      Structure attendue :
        [data-accordion]
@@ -303,6 +376,7 @@
     initStickyHeader();
     initStockCounter();
     initProductGallery();
+    initFeaturedGallery();
     initAccordion();
     initStickyATC();
   }
