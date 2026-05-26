@@ -85,6 +85,18 @@
     {% comment %} ====== EN-TÊTE — sticky avec navigation principale ====== {% endcomment %}
     <header class="site-header" id="SiteHeader" data-sticky-header>
       <div class="container site-header__inner">
+
+        {% comment %} Bouton burger — visible uniquement mobile (≤768px) {% endcomment %}
+        <button
+          type="button"
+          class="site-header__burger"
+          data-menu-toggle
+          aria-label="Ouvrir le menu"
+          aria-expanded="false"
+          aria-controls="MobileMenu">
+          {% render 'icon-menu' %}
+        </button>
+
         {% comment %} Logo — texte par défaut, image si définie dans les réglages {% endcomment %}
         <a href="{{ routes.root_url }}" class="site-header__logo" aria-label="{{ shop.name }}">
           {%- if settings.logo != blank -%}
@@ -99,7 +111,7 @@
           {%- endif -%}
         </a>
 
-        {% comment %} Navigation principale — basée sur le menu Shopify "main-menu" {% endcomment %}
+        {% comment %} Navigation desktop — masquée ≤768px (remplacée par le menu mobile) {% endcomment %}
         <nav class="site-nav" aria-label="{{ 'accessibility.main_navigation' | t }}">
           <ul class="site-nav__list">
             {%- for link in linklists.main-menu.links -%}
@@ -110,15 +122,72 @@
           </ul>
         </nav>
 
-        {% comment %} Actions — panier {% endcomment %}
-        <div class="site-header__actions">
-          <a href="{{ routes.cart_url }}" class="site-header__cart-link" aria-label="{{ 'cart.general.title' | t }}">
-            {{ 'cart.general.title' | t }}
-            <span class="site-header__cart-count" data-cart-count>({{ cart.item_count }})</span>
-          </a>
-        </div>
+        {% comment %} Icône panier — visible sur tous les viewports {% endcomment %}
+        <a href="{{ routes.cart_url }}" class="site-header__cart" aria-label="{{ 'cart.general.title' | t }} ({{ cart.item_count }})">
+          {% render 'icon-cart' %}
+          {%- if cart.item_count > 0 -%}
+            <span class="site-header__cart-count" data-cart-count aria-hidden="true">
+              {%- if cart.item_count > 9 -%}9+{%- else -%}{{ cart.item_count }}{%- endif -%}
+            </span>
+          {%- endif -%}
+        </a>
       </div>
     </header>
+
+    {% comment %} ====== MENU MOBILE — overlay fullscreen ====== {% endcomment %}
+    <div
+      class="mobile-menu"
+      id="MobileMenu"
+      data-mobile-menu
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-label="{{ 'accessibility.main_navigation' | t }}">
+
+      <div class="mobile-menu__header">
+        <button
+          type="button"
+          class="mobile-menu__close"
+          data-menu-close
+          aria-label="Fermer le menu">
+          {% render 'icon-close' %}
+        </button>
+      </div>
+
+      <nav class="mobile-menu__nav" aria-label="Menu principal">
+        <ul class="mobile-menu__list">
+          {%- if linklists.main-menu.links.size > 0 -%}
+            {%- for link in linklists.main-menu.links -%}
+              <li><a href="{{ link.url }}" class="mobile-menu__link">{{ link.title }}</a></li>
+            {%- endfor -%}
+          {%- else -%}
+            {% comment %} Liens par défaut si le menu Shopify n'est pas configuré {% endcomment %}
+            <li><a href="{{ routes.root_url }}" class="mobile-menu__link">Accueil</a></li>
+            <li><a href="/collections/all" class="mobile-menu__link">Collection</a></li>
+            <li><a href="/pages/notre-histoire" class="mobile-menu__link">Notre histoire</a></li>
+            <li><a href="/pages/contact" class="mobile-menu__link">Contact</a></li>
+          {%- endif -%}
+        </ul>
+      </nav>
+
+      <div class="mobile-menu__footer">
+        {%- if settings.social_instagram_link != blank -%}
+          <a
+            href="{{ settings.social_instagram_link }}"
+            class="mobile-menu__icon-link"
+            target="_blank"
+            rel="noopener"
+            aria-label="Instagram">
+            {% render 'icon-instagram' %}
+          </a>
+        {%- endif -%}
+
+        <a href="{{ routes.cart_url }}" class="mobile-menu__cart-link">
+          {% render 'icon-cart' %}
+          <span>Panier ({{ cart.item_count }})</span>
+        </a>
+      </div>
+    </div>
 
     {% comment %} ====== CONTENU PRINCIPAL ====== {% endcomment %}
     <main id="MainContent" class="main-content" role="main">

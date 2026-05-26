@@ -328,15 +328,41 @@ em {
   border-bottom-color: var(--color-border);
 }
 
+/* Layout mobile par défaut : burger | logo centré | panier
+   Layout desktop ≥769px : logo | nav | panier */
 .site-header__inner {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
   min-height: var(--header-height);
-  gap: var(--space-8);
+  gap: var(--space-4);
 }
 
+/* ----- Bouton burger (mobile only) ----- */
+.site-header__burger {
+  grid-column: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--color-accent);
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.site-header__burger:hover,
+.site-header__burger:focus-visible {
+  opacity: 0.7;
+}
+
+/* ----- Logo ----- */
 .site-header__logo {
+  grid-column: 2;
+  justify-self: center; /* centré sur mobile */
   font-family: var(--font-heading);
   font-size: var(--fs-lg);
   letter-spacing: var(--letter-spacing-wide);
@@ -349,14 +375,9 @@ em {
   font-weight: 400;
 }
 
+/* ----- Nav desktop (masquée mobile) ----- */
 .site-nav {
   display: none;
-}
-
-@media (min-width: 1024px) {
-  .site-nav {
-    display: block;
-  }
 }
 
 .site-nav__list {
@@ -377,21 +398,211 @@ em {
   color: var(--color-accent);
 }
 
-.site-header__cart-link {
-  font-size: var(--fs-xs);
-  font-weight: 500;
-  letter-spacing: var(--letter-spacing-wide);
-  text-transform: uppercase;
-  color: var(--color-text);
+/* ----- Icône panier + badge count ----- */
+.site-header__cart {
+  grid-column: 3;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--color-accent);
+  transition: opacity var(--transition-fast);
 }
 
-.site-header__cart-link:hover {
-  color: var(--color-accent);
+.site-header__cart:hover,
+.site-header__cart:focus-visible {
+  opacity: 0.7;
 }
 
 .site-header__cart-count {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  border-radius: 50%;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 18px;
+  text-align: center;
+  letter-spacing: 0;
+}
+
+/* ----- Layout desktop ≥769px : logo gauche, nav centre, panier droite ----- */
+@media (min-width: 769px) {
+  .site-header__burger {
+    display: none;
+  }
+
+  .site-header__logo {
+    grid-column: 1;
+    justify-self: start;
+  }
+
+  .site-nav {
+    display: block;
+    grid-column: 2;
+    justify-self: center;
+  }
+
+  .site-header__cart {
+    grid-column: 3;
+  }
+}
+
+/* ============================================================
+   MENU MOBILE — overlay fullscreen avec slide-in depuis la gauche
+   ============================================================ */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background-color: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6);
+  /* Caché par défaut — slide hors viewport vers la gauche */
+  transform: translateX(-100%);
+  visibility: hidden;
+  transition: transform 0.3s ease-out, visibility 0s linear 0.3s;
+}
+
+.mobile-menu.is-open {
+  transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.3s ease-out, visibility 0s linear 0s;
+}
+
+/* Désactive le menu mobile sur desktop */
+@media (min-width: 769px) {
+  .mobile-menu {
+    display: none;
+  }
+}
+
+/* Lock du scroll body quand le menu est ouvert */
+body.menu-open {
+  overflow: hidden;
+}
+
+/* En-tête du menu (croix de fermeture) */
+.mobile-menu__header {
+  display: flex;
+  justify-content: flex-end;
+  min-height: var(--header-height);
+  align-items: center;
+}
+
+.mobile-menu__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  padding: 0;
   color: var(--color-accent);
-  margin-left: var(--space-1);
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.mobile-menu__close:hover,
+.mobile-menu__close:focus-visible {
+  opacity: 0.7;
+}
+
+/* Liens principaux — centrés verticalement, grands */
+.mobile-menu__nav {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-menu__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8); /* 32px entre liens */
+  text-align: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-menu__link {
+  font-family: var(--font-heading);
+  font-size: 2rem; /* 32px */
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.mobile-menu__link:hover,
+.mobile-menu__link:focus-visible {
+  color: var(--color-accent);
+}
+
+/* Pied du menu — Instagram + Panier */
+.mobile-menu__footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-6) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.mobile-menu__icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  color: var(--color-accent);
+  transition: opacity var(--transition-fast);
+}
+
+.mobile-menu__icon-link:hover,
+.mobile-menu__icon-link:focus-visible {
+  opacity: 0.7;
+}
+
+.mobile-menu__cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.mobile-menu__cart-link:hover,
+.mobile-menu__cart-link:focus-visible {
+  opacity: 0.7;
+}
+
+/* Respect prefers-reduced-motion — désactive le slide */
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu {
+    transition: none;
+  }
 }
 
 /* ===== 9. PIED DE PAGE ===== */

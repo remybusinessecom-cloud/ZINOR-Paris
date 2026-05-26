@@ -369,7 +369,93 @@
   }
 
   /* ============================================================
-     7. INITIALISATION — au chargement du DOM
+     7. MENU MOBILE — overlay fullscreen
+     Toggle au tap sur [data-menu-toggle], fermeture par
+     croix / lien interne / Échap. Lock scroll body, focus
+     trap, aria-* synchronisés.
+     ============================================================ */
+  function initMobileMenu() {
+    const toggle = document.querySelector('[data-menu-toggle]');
+    const menu = document.querySelector('[data-mobile-menu]');
+    const closeBtn = document.querySelector('[data-menu-close]');
+
+    if (!toggle || !menu) return;
+
+    // Élément qui avait le focus avant ouverture (à restaurer à la fermeture)
+    let lastFocused = null;
+
+    function openMenu() {
+      lastFocused = document.activeElement;
+      menu.classList.add('is-open');
+      menu.setAttribute('aria-hidden', 'false');
+      toggle.setAttribute('aria-expanded', 'true');
+      document.body.classList.add('menu-open');
+
+      // Focus sur le bouton de fermeture (entrée naturelle dans le dialogue)
+      if (closeBtn) {
+        // setTimeout pour laisser la transition CSS démarrer
+        setTimeout(function () { closeBtn.focus(); }, 50);
+      }
+    }
+
+    function closeMenu() {
+      menu.classList.remove('is-open');
+      menu.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+
+      // Restaure le focus sur le déclencheur d'origine
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus();
+      }
+    }
+
+    // Ouverture
+    toggle.addEventListener('click', openMenu);
+
+    // Fermeture via la croix
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeMenu);
+    }
+
+    // Fermeture au clic sur un lien interne (navigation immédiate)
+    menu.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Touche Échap — ferme si le menu est ouvert
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Escape') return;
+      if (!menu.classList.contains('is-open')) return;
+      event.preventDefault();
+      closeMenu();
+    });
+
+    // Piège à focus — Tab boucle dans le menu quand il est ouvert
+    menu.addEventListener('keydown', function (event) {
+      if (event.key !== 'Tab') return;
+      if (!menu.classList.contains('is-open')) return;
+
+      const focusables = menu.querySelectorAll(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusables.length === 0) return;
+
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  /* ============================================================
+     8. INITIALISATION — au chargement du DOM
      ============================================================ */
   function init() {
     initScrollAnimations();
@@ -379,6 +465,7 @@
     initFeaturedGallery();
     initAccordion();
     initStickyATC();
+    initMobileMenu();
   }
 
   // On lance dès que possible — DOMContentLoaded ou immédiatement si déjà chargé
