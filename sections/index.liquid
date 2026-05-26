@@ -298,33 +298,36 @@
 {% stylesheet %}
   /* ========== HERO ==========
      Layering : image (z-1) → overlay (z-2) → contenu (z-3)
+     Le hero est un bloc indépendant — pas d'isolation,
+     pas de flex-shrink, pour éviter de casser le flux des
+     sections suivantes.
      ========================================================= */
   .zinor-hero {
     position: relative;
     min-height: 100vh;
+    width: 100%;
     display: flex;
     align-items: center;
     overflow: hidden;
     color: var(--color-text);
-    background-color: var(--color-background); /* fallback si pas d'image */
-    isolation: isolate; /* nouveau stacking context propre */
+    background-color: var(--color-background);
+    /* Empêche toute compression par un parent flex (body est flex column) */
+    flex-shrink: 0;
   }
 
   /* Image de fond — couche la plus basse */
   .zinor-hero__media {
     position: absolute;
     top: 0;
-    right: 0;
-    bottom: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
     z-index: 1;
     pointer-events: none;
+    margin: 0;
   }
 
   .zinor-hero__media img {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -332,7 +335,7 @@
     display: block;
   }
 
-  /* Overlay dégradé gauche → droite pour garantir la lisibilité du texte */
+  /* Overlay dégradé gauche → droite pour la lisibilité du texte */
   .zinor-hero__overlay {
     position: absolute;
     top: 0;
@@ -344,24 +347,30 @@
     background: linear-gradient(
       90deg,
       rgba(10, 10, 10, 0.85) 0%,
-      rgba(10, 10, 10, 0.4) 60%,
-      transparent 100%
+      rgba(10, 10, 10, 0.5) 50%,
+      rgba(10, 10, 10, 0.3) 100%
     );
   }
 
-  /* Conteneur du texte — couche la plus haute, au-dessus de tout */
+  /* Conteneur du texte — couche la plus haute */
   .zinor-hero__inner {
     position: relative;
     z-index: 3;
     width: 100%;
-    padding-top: 3rem;
-    padding-bottom: 3rem;
+    padding-left: 2.5rem; /* 40px mobile */
+    padding-right: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-hero__inner {
+      padding-left: 5rem; /* 80px desktop */
+      padding-right: 5rem;
+    }
   }
 
   .zinor-hero__content {
     max-width: 600px;
     text-align: left;
-    /* text-shadow subtil — sécurise la lisibilité sur images claires */
     text-shadow: 0 1px 24px rgba(0, 0, 0, 0.35);
   }
 
@@ -373,7 +382,7 @@
     text-transform: uppercase;
     color: var(--color-accent);
     margin-bottom: 1.5rem;
-    text-shadow: none; /* le rose gold suffit, pas besoin d'ombre */
+    text-shadow: none;
   }
 
   .zinor-hero__title {
@@ -399,15 +408,26 @@
   .zinor-hero__cta {
     margin-top: 0.5rem;
     text-shadow: none;
-    /* assure que le CTA passe au-dessus de tout overlay résiduel */
-    position: relative;
-    z-index: 1;
   }
 
   @media (min-width: 768px) {
     .zinor-hero__title {
       font-size: 4.5rem; /* 72px desktop */
     }
+  }
+
+  /* ========== RESETS DÉFENSIFS — sections après le hero ==========
+     Garantit que les sections suivantes restent dans le flux normal,
+     sans hériter de position absolute ou de z-index ambigu.
+     ============================================================== */
+  .zinor-stock-bar,
+  .zinor-featured,
+  .zinor-story,
+  .zinor-craft {
+    position: relative;
+    z-index: auto;
+    display: block;
+    width: 100%;
   }
 
   /* ========== COMPTEUR STOCK ========== */

@@ -88,6 +88,16 @@ body {
   flex-direction: column;
 }
 
+/* Main — flex child qui peut grandir pour pousser le footer en bas,
+   mais ne se compresse jamais (évite que les sections internes
+   avec min-height: 100vh soient écrasées par l'algo flex). */
+main,
+.main-content {
+  flex: 1 0 auto;
+  display: block;
+  width: 100%;
+}
+
 img,
 picture,
 video,
