@@ -51,6 +51,17 @@
         "craft_desc_3": "Boucle rose gold gravée."
       }
     },
+    "editorial_lifestyle_x4RDxG": {
+      "type": "editorial-lifestyle",
+      "name": "Éditorial lifestyle",
+      "settings": {
+        "image": "shopify://shop_images/Montre_ZINOR_Paris_-_Elegant_sur_poignet_2.png",
+        "citation": "« Cent montres. Cent histoires. La tienne commence ici. »",
+        "sous_texte": "ZINOR PARIS — FIRST EDITION",
+        "hauteur_desktop": 70,
+        "hauteur_mobile": 50
+      }
+    },
     "reassurance": {
       "type": "reassurance-banner",
       "settings": {
@@ -70,16 +81,6 @@
         "subtitle_limited": "100 pièces numérotées",
         "drawer_limited_title": "Édition strictement limitée",
         "drawer_limited_body": ""
-      }
-    },
-    "editorial_lifestyle_x4RDxG": {
-      "type": "editorial-lifestyle",
-      "name": "Éditorial lifestyle",
-      "settings": {
-        "citation": "« Cent montres. Cent histoires. La tienne commence ici. »",
-        "sous_texte": "ZINOR PARIS — FIRST EDITION",
-        "hauteur_desktop": 70,
-        "hauteur_mobile": 50
       }
     }
   },
