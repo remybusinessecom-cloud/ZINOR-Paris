@@ -122,15 +122,40 @@
           </ul>
         </nav>
 
-        {% comment %} Icône panier — visible sur tous les viewports {% endcomment %}
-        <a href="{{ routes.cart_url }}" class="site-header__cart" aria-label="{{ 'cart.general.title' | t }} ({{ cart.item_count }})">
-          {% render 'icon-cart' %}
-          {%- if cart.item_count > 0 -%}
-            <span class="site-header__cart-count" data-cart-count aria-hidden="true">
-              {%- if cart.item_count > 9 -%}9+{%- else -%}{{ cart.item_count }}{%- endif -%}
-            </span>
-          {%- endif -%}
-        </a>
+        {% comment %} Groupe d'actions — recherche · compte · panier (toujours visibles) {% endcomment %}
+        <div class="site-header__actions">
+          <button
+            type="button"
+            class="header__icon-button"
+            data-search-toggle
+            aria-label="Rechercher"
+            aria-expanded="false"
+            aria-controls="SearchOverlay">
+            {% render 'icon-search' %}
+          </button>
+
+          <button
+            type="button"
+            class="header__icon-button"
+            data-account-toggle
+            aria-label="Espace client"
+            aria-expanded="false"
+            aria-controls="AccountDrawer">
+            {% render 'icon-account' %}
+          </button>
+
+          <a
+            href="{{ routes.cart_url }}"
+            class="header__icon-button site-header__cart"
+            aria-label="{{ 'cart.general.title' | t }} ({{ cart.item_count }})">
+            {% render 'icon-cart' %}
+            {%- if cart.item_count > 0 -%}
+              <span class="site-header__cart-count" data-cart-count aria-hidden="true">
+                {%- if cart.item_count > 9 -%}9+{%- else -%}{{ cart.item_count }}{%- endif -%}
+              </span>
+            {%- endif -%}
+          </a>
+        </div>
       </div>
     </header>
 
@@ -170,6 +195,20 @@
         </ul>
       </nav>
 
+      {% comment %} Liens secondaires (compte + suivi) — au-dessus des icônes sociales {% endcomment %}
+      <ul class="mobile-menu__secondary">
+        <li>
+          <a href="{{ routes.account_url | default: '/account' }}" class="mobile-menu__secondary-link">
+            Mon compte
+          </a>
+        </li>
+        <li>
+          <a href="/pages/suivre-commande" class="mobile-menu__secondary-link">
+            Suivre ma commande
+          </a>
+        </li>
+      </ul>
+
       <div class="mobile-menu__footer">
         {%- if settings.social_instagram_link != blank -%}
           <a
@@ -188,6 +227,107 @@
         </a>
       </div>
     </div>
+
+    {% comment %} ====== OVERLAY RECHERCHE — fullscreen blur ====== {% endcomment %}
+    <div
+      class="search-overlay"
+      id="SearchOverlay"
+      data-search-overlay
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-label="Rechercher">
+      <button
+        type="button"
+        class="search-overlay__close"
+        data-search-close
+        aria-label="Fermer la recherche">
+        {% render 'icon-close' %}
+      </button>
+
+      <form action="{{ routes.search_url }}" method="get" class="search-overlay__form" role="search">
+        <label for="SearchInput" class="visually-hidden">Rechercher</label>
+        <input
+          type="search"
+          id="SearchInput"
+          name="q"
+          class="search-overlay__input"
+          placeholder="Rechercher une pièce…"
+          autocomplete="off"
+          spellcheck="false"
+          data-search-input>
+        {% comment %} Scope recherche produits uniquement par défaut {% endcomment %}
+        <input type="hidden" name="type" value="product">
+      </form>
+    </div>
+
+    {% comment %} ====== DRAWER COMPTE — backdrop + sidebar slide right ====== {% endcomment %}
+    <div
+      class="account-drawer-backdrop"
+      data-account-backdrop
+      aria-hidden="true"></div>
+
+    <aside
+      class="account-drawer"
+      id="AccountDrawer"
+      data-account-drawer
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-label="Espace client">
+
+      <button
+        type="button"
+        class="account-drawer__close"
+        data-account-close
+        aria-label="Fermer">
+        {% render 'icon-close' %}
+      </button>
+
+      <div class="account-drawer__body">
+        {%- if customer -%}
+          {% comment %} ===== ÉTAT B — utilisateur connecté ===== {% endcomment %}
+          <h2 class="account-drawer__greeting">
+            Bonjour {{ customer.first_name | default: customer.name }}
+          </h2>
+
+          <ul class="account-drawer__menu">
+            <li><a href="{{ routes.account_url }}" class="account-drawer__menu-link">Mes commandes</a></li>
+            <li><a href="{{ routes.account_addresses_url }}" class="account-drawer__menu-link">Mes adresses</a></li>
+            <li><a href="{{ routes.account_url }}" class="account-drawer__menu-link">Mes informations</a></li>
+            <li><a href="{{ routes.account_logout_url }}" class="account-drawer__menu-link">Se déconnecter</a></li>
+          </ul>
+        {%- else -%}
+          {% comment %} ===== ÉTAT A — utilisateur non connecté ===== {% endcomment %}
+          <h2 class="account-drawer__title">
+            Connectez-vous<br>pour consulter<br>vos commandes
+          </h2>
+
+          <a href="{{ routes.account_login_url }}" class="account-drawer__cta">
+            Connexion
+          </a>
+
+          <p class="account-drawer__legal">
+            En vous connectant, vous acceptez notre
+            <a href="/policies/privacy-policy">politique de confidentialité</a>
+            et nos
+            <a href="/policies/terms-of-service">conditions d'utilisation</a>.
+          </p>
+        {%- endif -%}
+      </div>
+
+      {% comment %} ===== ÉTAT C — pied de drawer, toujours visible ===== {% endcomment %}
+      <div class="account-drawer__footer">
+        <a href="/pages/suivre-commande" class="account-drawer__footer-link">
+          {% render 'icon-cart' %}
+          <span>Suivre une commande</span>
+        </a>
+        <a href="{{ routes.account_url | default: '/account' }}" class="account-drawer__footer-link">
+          {% render 'icon-account' %}
+          <span>Mon compte</span>
+        </a>
+      </div>
+    </aside>
 
     {% comment %} ====== CONTENU PRINCIPAL ====== {% endcomment %}
     <main id="MainContent" class="main-content" role="main">

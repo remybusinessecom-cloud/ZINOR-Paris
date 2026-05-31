@@ -1,0 +1,22 @@
+{% comment %}
+  Icône — Recherche (loupe classique)
+  Line-art 24x24, stroke via currentColor
+  Usage : {% render 'icon-search' %}
+{% endcomment %}
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 24 24"
+  width="24"
+  height="24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false">
+  {% comment %} Cercle de la loupe (rayon 7) {% endcomment %}
+  <circle cx="10.5" cy="10.5" r="7"/>
+  {% comment %} Manche diagonal {% endcomment %}
+  <line x1="15.5" y1="15.5" x2="20.5" y2="20.5"/>
+</svg>

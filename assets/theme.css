@@ -398,24 +398,37 @@ em {
   color: var(--color-accent);
 }
 
-/* ----- Icône panier + badge count ----- */
-.site-header__cart {
+/* ----- Groupe d'actions (recherche · compte · panier) ----- */
+.site-header__actions {
   grid-column: 3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ----- Bouton icône — utility réutilisable ----- */
+.header__icon-button {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 40px;
   height: 40px;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
   color: var(--color-accent);
+  text-decoration: none;
   transition: opacity var(--transition-fast);
 }
 
-.site-header__cart:hover,
-.site-header__cart:focus-visible {
+.header__icon-button:hover,
+.header__icon-button:focus-visible {
   opacity: 0.7;
 }
 
+/* Pastille count du panier */
 .site-header__cart-count {
   position: absolute;
   top: -2px;
@@ -434,7 +447,7 @@ em {
   letter-spacing: 0;
 }
 
-/* ----- Layout desktop ≥769px : logo gauche, nav centre, panier droite ----- */
+/* ----- Layout desktop ≥769px : logo gauche, nav centre, actions droite ----- */
 @media (min-width: 769px) {
   .site-header__burger {
     display: none;
@@ -451,8 +464,9 @@ em {
     justify-self: center;
   }
 
-  .site-header__cart {
+  .site-header__actions {
     grid-column: 3;
+    gap: 8px;
   }
 }
 
@@ -489,8 +503,8 @@ em {
   }
 }
 
-/* Lock du scroll body quand le menu est ouvert */
-body.menu-open {
+/* Lock du scroll body — partagé par menu mobile / search / drawer */
+body.no-scroll {
   overflow: hidden;
 }
 
@@ -598,9 +612,324 @@ body.menu-open {
   opacity: 0.7;
 }
 
-/* Respect prefers-reduced-motion — désactive le slide */
+/* Liens secondaires du menu mobile — Compte + Suivi commande */
+.mobile-menu__secondary {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.mobile-menu__secondary-link {
+  font-family: var(--font-heading);
+  font-size: 1.5rem; /* 24px — plus petit que les principaux 32px */
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.mobile-menu__secondary-link:hover,
+.mobile-menu__secondary-link:focus-visible {
+  color: var(--color-accent);
+}
+
+/* ============================================================
+   OVERLAY RECHERCHE — fullscreen avec blur
+   ============================================================ */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background-color: rgba(10, 10, 10, 0.95);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.search-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0s linear 0s;
+}
+
+.search-overlay__close {
+  position: absolute;
+  top: var(--space-6);
+  right: var(--space-6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-accent);
+  transition: opacity var(--transition-fast);
+}
+
+.search-overlay__close:hover,
+.search-overlay__close:focus-visible {
+  opacity: 0.7;
+}
+
+.search-overlay__form {
+  width: 100%;
+  max-width: 800px;
+}
+
+.search-overlay__input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--color-accent);
+  border-radius: 0;
+  padding: 1.25rem 0;
+  font-family: var(--font-heading);
+  font-size: 1.5rem; /* 24px mobile */
+  font-weight: 400;
+  color: var(--color-text);
+  outline: none;
+  letter-spacing: 0.01em;
+}
+
+@media (min-width: 768px) {
+  .search-overlay__input {
+    font-size: 2rem; /* 32px desktop */
+  }
+}
+
+.search-overlay__input::placeholder {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.search-overlay__input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ============================================================
+   DRAWER COMPTE — sidebar slide from right (style Daniel Wellington)
+   ============================================================ */
+.account-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background-color: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.account-drawer-backdrop.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.3s ease, visibility 0s linear 0s;
+}
+
+.account-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  width: 100%;
+  max-width: 480px;
+  background-color: var(--color-background);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              visibility 0s linear 0.4s;
+}
+
+.account-drawer.is-open {
+  transform: translateX(0);
+  visibility: visible;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              visibility 0s linear 0s;
+}
+
+.account-drawer__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin: var(--space-6);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-accent);
+  align-self: flex-start;
+  transition: opacity var(--transition-fast);
+}
+
+.account-drawer__close:hover,
+.account-drawer__close:focus-visible {
+  opacity: 0.7;
+}
+
+/* Corps du drawer — flex 1 pour pousser le footer en bas */
+.account-drawer__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  text-align: center;
+}
+
+/* ----- État A : utilisateur non connecté ----- */
+.account-drawer__title {
+  font-family: var(--font-heading);
+  font-size: 2rem; /* 32px */
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--color-text);
+  margin: 0;
+}
+
+.account-drawer__cta {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  margin-top: var(--space-12); /* 48px */
+  padding: 1.125rem; /* 18px */
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  font-family: var(--font-body);
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 250ms ease;
+}
+
+.account-drawer__cta:hover,
+.account-drawer__cta:focus-visible {
+  background-color: #B58559;
+}
+
+.account-drawer__legal {
+  margin-top: var(--space-6);
+  font-family: var(--font-body);
+  font-size: 0.75rem; /* 12px */
+  line-height: 1.6;
+  color: #888;
+  max-width: 320px;
+}
+
+.account-drawer__legal a {
+  color: #888;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+.account-drawer__legal a:hover {
+  color: var(--color-accent);
+}
+
+/* ----- État B : utilisateur connecté ----- */
+.account-drawer__greeting {
+  font-family: var(--font-heading);
+  font-size: 1.75rem; /* 28px */
+  font-weight: 400;
+  color: var(--color-text);
+  margin: 0 0 var(--space-8);
+  text-align: center;
+}
+
+.account-drawer__menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6); /* 24px */
+  width: 100%;
+  max-width: 320px;
+}
+
+.account-drawer__menu-link {
+  font-family: var(--font-body);
+  font-size: 1rem; /* 16px */
+  color: var(--color-text);
+  text-decoration: none;
+  text-align: center;
+  display: block;
+  padding: var(--space-2) 0;
+  transition: color var(--transition-fast);
+}
+
+.account-drawer__menu-link:hover,
+.account-drawer__menu-link:focus-visible {
+  color: var(--color-accent);
+}
+
+/* ----- État C : footer (toujours visible) ----- */
+.account-drawer__footer {
+  border-top: 1px solid #1F1F1F;
+  padding: 2rem var(--space-6); /* 32px vertical */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.account-drawer__footer-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2); /* 8px */
+  color: var(--color-accent);
+  text-decoration: none;
+  transition: opacity var(--transition-fast);
+}
+
+.account-drawer__footer-link:hover,
+.account-drawer__footer-link:focus-visible {
+  opacity: 0.7;
+}
+
+.account-drawer__footer-link svg {
+  width: 32px;
+  height: 32px;
+}
+
+.account-drawer__footer-link span {
+  font-family: var(--font-body);
+  font-size: 0.6875rem; /* 11px */
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text);
+}
+
+/* Respect prefers-reduced-motion — désactive slides et fades */
 @media (prefers-reduced-motion: reduce) {
-  .mobile-menu {
+  .mobile-menu,
+  .search-overlay,
+  .account-drawer,
+  .account-drawer-backdrop {
     transition: none;
   }
 }

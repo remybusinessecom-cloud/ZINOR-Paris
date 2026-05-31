@@ -369,76 +369,36 @@
   }
 
   /* ============================================================
-     7. MENU MOBILE — overlay fullscreen
-     Toggle au tap sur [data-menu-toggle], fermeture par
-     croix / lien interne / Échap. Lock scroll body, focus
-     trap, aria-* synchronisés.
+     HELPERS PARTAGÉS — verrou de scroll & focus trap
+     Utilisés par menu mobile, search overlay et account drawer.
      ============================================================ */
-  function initMobileMenu() {
-    const toggle = document.querySelector('[data-menu-toggle]');
-    const menu = document.querySelector('[data-mobile-menu]');
-    const closeBtn = document.querySelector('[data-menu-close]');
 
-    if (!toggle || !menu) return;
+  // Compteur de verrous — permet à plusieurs overlays de cohabiter
+  // sans déverrouiller le scroll prématurément
+  let scrollLockCount = 0;
 
-    // Élément qui avait le focus avant ouverture (à restaurer à la fermeture)
-    let lastFocused = null;
+  function lockScroll() {
+    scrollLockCount += 1;
+    document.body.classList.add('no-scroll');
+  }
 
-    function openMenu() {
-      lastFocused = document.activeElement;
-      menu.classList.add('is-open');
-      menu.setAttribute('aria-hidden', 'false');
-      toggle.setAttribute('aria-expanded', 'true');
-      document.body.classList.add('menu-open');
-
-      // Focus sur le bouton de fermeture (entrée naturelle dans le dialogue)
-      if (closeBtn) {
-        // setTimeout pour laisser la transition CSS démarrer
-        setTimeout(function () { closeBtn.focus(); }, 50);
-      }
+  function unlockScroll() {
+    scrollLockCount = Math.max(0, scrollLockCount - 1);
+    if (scrollLockCount === 0) {
+      document.body.classList.remove('no-scroll');
     }
+  }
 
-    function closeMenu() {
-      menu.classList.remove('is-open');
-      menu.setAttribute('aria-hidden', 'true');
-      toggle.setAttribute('aria-expanded', 'false');
-      document.body.classList.remove('menu-open');
+  // Sélecteur des éléments focusables dans un container
+  const FOCUSABLE_SELECTOR = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-      // Restaure le focus sur le déclencheur d'origine
-      if (lastFocused && typeof lastFocused.focus === 'function') {
-        lastFocused.focus();
-      }
-    }
-
-    // Ouverture
-    toggle.addEventListener('click', openMenu);
-
-    // Fermeture via la croix
-    if (closeBtn) {
-      closeBtn.addEventListener('click', closeMenu);
-    }
-
-    // Fermeture au clic sur un lien interne (navigation immédiate)
-    menu.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', closeMenu);
-    });
-
-    // Touche Échap — ferme si le menu est ouvert
-    document.addEventListener('keydown', function (event) {
-      if (event.key !== 'Escape') return;
-      if (!menu.classList.contains('is-open')) return;
-      event.preventDefault();
-      closeMenu();
-    });
-
-    // Piège à focus — Tab boucle dans le menu quand il est ouvert
-    menu.addEventListener('keydown', function (event) {
+  // Piège à focus générique : Tab et Shift+Tab cyclent à l'intérieur
+  function attachFocusTrap(container, isOpenFn) {
+    container.addEventListener('keydown', function (event) {
       if (event.key !== 'Tab') return;
-      if (!menu.classList.contains('is-open')) return;
+      if (!isOpenFn()) return;
 
-      const focusables = menu.querySelectorAll(
-        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      );
+      const focusables = container.querySelectorAll(FOCUSABLE_SELECTOR);
       if (focusables.length === 0) return;
 
       const first = focusables[0];
@@ -455,7 +415,167 @@
   }
 
   /* ============================================================
-     8. INITIALISATION — au chargement du DOM
+     7. MENU MOBILE — overlay fullscreen (burger)
+     ============================================================ */
+  function initMobileMenu() {
+    const toggle = document.querySelector('[data-menu-toggle]');
+    const menu = document.querySelector('[data-mobile-menu]');
+    const closeBtn = document.querySelector('[data-menu-close]');
+
+    if (!toggle || !menu) return;
+
+    let lastFocused = null;
+    const isOpen = function () { return menu.classList.contains('is-open'); };
+
+    function openMenu() {
+      lastFocused = document.activeElement;
+      menu.classList.add('is-open');
+      menu.setAttribute('aria-hidden', 'false');
+      toggle.setAttribute('aria-expanded', 'true');
+      lockScroll();
+      if (closeBtn) setTimeout(function () { closeBtn.focus(); }, 50);
+    }
+
+    function closeMenu() {
+      menu.classList.remove('is-open');
+      menu.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false');
+      unlockScroll();
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus();
+      }
+    }
+
+    toggle.addEventListener('click', openMenu);
+    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+
+    // Fermeture au clic sur un lien interne
+    menu.querySelectorAll('a').forEach(function (link) {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Touche Échap
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && isOpen()) {
+        event.preventDefault();
+        closeMenu();
+      }
+    });
+
+    attachFocusTrap(menu, isOpen);
+  }
+
+  /* ============================================================
+     8. SEARCH OVERLAY — recherche fullscreen avec blur
+     Toggle [data-search-toggle], fermeture par croix / Échap.
+     Focus automatique sur l'input à l'ouverture.
+     ============================================================ */
+  function initSearchOverlay() {
+    const toggle = document.querySelector('[data-search-toggle]');
+    const overlay = document.querySelector('[data-search-overlay]');
+    const closeBtn = document.querySelector('[data-search-close]');
+    const input = document.querySelector('[data-search-input]');
+
+    if (!toggle || !overlay) return;
+
+    let lastFocused = null;
+    const isOpen = function () { return overlay.classList.contains('is-open'); };
+
+    function open() {
+      lastFocused = document.activeElement;
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden', 'false');
+      toggle.setAttribute('aria-expanded', 'true');
+      lockScroll();
+      // Focus auto sur le champ — attend la fin de la transition pour éviter le scroll
+      if (input) setTimeout(function () { input.focus(); }, 100);
+    }
+
+    function close() {
+      overlay.classList.remove('is-open');
+      overlay.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false');
+      unlockScroll();
+      if (input) input.value = '';
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus();
+      }
+    }
+
+    toggle.addEventListener('click', open);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && isOpen()) {
+        event.preventDefault();
+        close();
+      }
+    });
+
+    attachFocusTrap(overlay, isOpen);
+  }
+
+  /* ============================================================
+     9. ACCOUNT DRAWER — sidebar slide depuis la droite
+     Pattern Daniel Wellington : backdrop sombre + drawer 480px.
+     Toggle [data-account-toggle], fermeture par croix / backdrop
+     / Échap. Focus trap, ARIA, scroll lock.
+     ============================================================ */
+  function initAccountDrawer() {
+    const toggle = document.querySelector('[data-account-toggle]');
+    const drawer = document.querySelector('[data-account-drawer]');
+    const backdrop = document.querySelector('[data-account-backdrop]');
+    const closeBtn = document.querySelector('[data-account-close]');
+
+    if (!toggle || !drawer) return;
+
+    let lastFocused = null;
+    const isOpen = function () { return drawer.classList.contains('is-open'); };
+
+    function open() {
+      lastFocused = document.activeElement;
+      drawer.classList.add('is-open');
+      drawer.setAttribute('aria-hidden', 'false');
+      toggle.setAttribute('aria-expanded', 'true');
+      if (backdrop) {
+        backdrop.classList.add('is-visible');
+        backdrop.setAttribute('aria-hidden', 'false');
+      }
+      lockScroll();
+      if (closeBtn) setTimeout(function () { closeBtn.focus(); }, 100);
+    }
+
+    function close() {
+      drawer.classList.remove('is-open');
+      drawer.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (backdrop) {
+        backdrop.classList.remove('is-visible');
+        backdrop.setAttribute('aria-hidden', 'true');
+      }
+      unlockScroll();
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus();
+      }
+    }
+
+    toggle.addEventListener('click', open);
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    // Clic sur le backdrop ferme également
+    if (backdrop) backdrop.addEventListener('click', close);
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && isOpen()) {
+        event.preventDefault();
+        close();
+      }
+    });
+
+    attachFocusTrap(drawer, isOpen);
+  }
+
+  /* ============================================================
+     10. INITIALISATION — au chargement du DOM
      ============================================================ */
   function init() {
     initScrollAnimations();
@@ -466,6 +586,8 @@
     initAccordion();
     initStickyATC();
     initMobileMenu();
+    initSearchOverlay();
+    initAccountDrawer();
   }
 
   // On lance dès que possible — DOMContentLoaded ou immédiatement si déjà chargé
