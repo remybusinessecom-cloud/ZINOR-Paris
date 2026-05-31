@@ -1,0 +1,222 @@
+{% comment %}
+  ============================================================
+  ZINOR PARIS — Section éditoriale lifestyle
+  Image pleine largeur + citation italique + lignes décoratives
+  Hauteur configurable desktop/mobile en vh
+  ============================================================
+{% endcomment %}
+
+<section
+  class="zinor-editorial"
+  style="--h-desktop: {{ section.settings.hauteur_desktop | default: 70 }}vh; --h-mobile: {{ section.settings.hauteur_mobile | default: 50 }}vh;"
+  aria-label="Citation éditoriale">
+
+  {%- if section.settings.image != blank -%}
+    <div class="zinor-editorial__media">
+      {{
+        section.settings.image
+        | image_url: width: 2400
+        | image_tag:
+          loading: 'lazy',
+          widths: '600, 900, 1200, 1600, 2000, 2400',
+          sizes: '100vw',
+          alt: section.settings.image.alt | default: 'ZINOR PARIS'
+      }}
+    </div>
+  {%- endif -%}
+
+  <div class="zinor-editorial__overlay" aria-hidden="true"></div>
+
+  <div class="zinor-editorial__inner">
+    <div class="zinor-editorial__content fade-in">
+      <span class="zinor-editorial__line" aria-hidden="true"></span>
+
+      <blockquote class="zinor-editorial__citation">
+        {{ section.settings.citation | default: '« Cent montres. Cent histoires. La tienne commence ici. »' }}
+      </blockquote>
+
+      {%- if section.settings.sous_texte != blank -%}
+        <p class="zinor-editorial__caption">
+          {{ section.settings.sous_texte }}
+        </p>
+      {%- endif -%}
+
+      <span class="zinor-editorial__line" aria-hidden="true"></span>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .zinor-editorial {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: var(--h-mobile, 50vh);
+    color: var(--color-text);
+    background-color: var(--color-background);
+  }
+
+  @media (min-width: 768px) {
+    .zinor-editorial {
+      height: var(--h-desktop, 70vh);
+    }
+  }
+
+  /* Image de fond — z-1 */
+  .zinor-editorial__media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .zinor-editorial__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  /* Overlay dégradé gauche → droite — z-2 */
+  .zinor-editorial__overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+      to right,
+      rgba(10, 10, 10, 0.75) 0%,
+      rgba(10, 10, 10, 0.3) 60%,
+      rgba(10, 10, 10, 0.1) 100%
+    );
+  }
+
+  /* Contenu — z-3 */
+  .zinor-editorial__inner {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+    display: flex;
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-editorial__inner {
+      padding: 0 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .zinor-editorial__inner {
+      padding: 0 5rem;
+    }
+  }
+
+  .zinor-editorial__content {
+    max-width: 640px;
+    text-align: left;
+  }
+
+  /* Lignes décoratives rose gold (40×1px) au-dessus et en-dessous */
+  .zinor-editorial__line {
+    display: block;
+    width: 40px;
+    height: 1px;
+    background-color: var(--color-accent);
+    margin: 0 0 1.75rem;
+  }
+
+  .zinor-editorial__content > .zinor-editorial__line:last-child {
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+  }
+
+  .zinor-editorial__citation {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: 1.5rem; /* 24px mobile */
+    line-height: 1.3;
+    font-weight: 400;
+    color: var(--color-text);
+    margin: 0 0 1.25rem;
+    quotes: none;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-editorial__citation {
+      font-size: 2.2rem; /* ~35px desktop */
+    }
+  }
+
+  .zinor-editorial__caption {
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 0 0 1.5rem;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Éditorial lifestyle",
+  "tag": "section",
+  "class": "zinor-editorial-section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image de fond"
+    },
+    {
+      "type": "text",
+      "id": "citation",
+      "label": "Citation",
+      "default": "« Cent montres. Cent histoires. La tienne commence ici. »"
+    },
+    {
+      "type": "text",
+      "id": "sous_texte",
+      "label": "Sous-texte (uppercase)",
+      "default": "ZINOR PARIS — FIRST EDITION"
+    },
+    {
+      "type": "range",
+      "id": "hauteur_desktop",
+      "label": "Hauteur desktop",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "default": 70,
+      "unit": "vh"
+    },
+    {
+      "type": "range",
+      "id": "hauteur_mobile",
+      "label": "Hauteur mobile",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "default": 50,
+      "unit": "vh"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Éditorial lifestyle"
+    }
+  ]
+}
+{% endschema %}

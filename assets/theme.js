@@ -688,7 +688,79 @@
   }
 
   /* ============================================================
-     11. INITIALISATION — au chargement du DOM
+     11. CURSEUR DIRECTIONNEL — galerie produit phare desktop
+     Cercle 52px qui suit la souris dans .zinor-featured__gallery-main.
+     La flèche pivote selon la moitié (gauche : ← / droite : →).
+     Clic gauche → image précédente, clic droite → image suivante.
+     Désactivé sur écrans tactiles (pointer: coarse).
+     ============================================================ */
+  function initFeaturedProductCursor() {
+    const galleries = document.querySelectorAll('[data-featured-gallery]');
+    if (galleries.length === 0) return;
+
+    // Pas de curseur custom sur les écrans tactiles
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+
+    galleries.forEach(function (gallery) {
+      const main = gallery.querySelector('.zinor-featured__gallery-main');
+      const images = Array.from(gallery.querySelectorAll('[data-featured-image]'));
+      const dots = Array.from(gallery.querySelectorAll('[data-featured-dot]'));
+
+      // Pas de curseur si une seule image ou pas de dots (rien à naviguer)
+      if (!main || images.length <= 1 || dots.length === 0) return;
+
+      // Création du curseur — flèche ← par défaut (pivote sur la moitié droite)
+      const cursor = document.createElement('div');
+      cursor.className = 'zinor-featured__cursor';
+      cursor.setAttribute('aria-hidden', 'true');
+      cursor.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>';
+      main.appendChild(cursor);
+
+      function getActiveIndex() {
+        for (let i = 0; i < images.length; i++) {
+          if (images[i].classList.contains('is-active')) return i;
+        }
+        return 0;
+      }
+
+      function navigate(direction) {
+        const current = getActiveIndex();
+        let next = current + direction;
+        if (next < 0) next = images.length - 1;
+        if (next >= images.length) next = 0;
+        // Réutilise la logique existante d'initFeaturedGallery via le clic
+        dots[next].click();
+      }
+
+      // Suit la souris en continu ; bascule .is-right selon la moitié
+      main.addEventListener('mousemove', function (event) {
+        const rect = main.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        cursor.style.left = x + 'px';
+        cursor.style.top = y + 'px';
+        cursor.classList.toggle('is-right', x > rect.width / 2);
+      });
+
+      main.addEventListener('mouseenter', function () {
+        cursor.classList.add('is-visible');
+      });
+
+      main.addEventListener('mouseleave', function () {
+        cursor.classList.remove('is-visible');
+      });
+
+      // Clic sur la zone image → navigation prev/suivant selon la moitié
+      main.addEventListener('click', function (event) {
+        const rect = main.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        navigate(x > rect.width / 2 ? 1 : -1);
+      });
+    });
+  }
+
+  /* ============================================================
+     12. INITIALISATION — au chargement du DOM
      ============================================================ */
   function init() {
     initScrollAnimations();
@@ -702,6 +774,7 @@
     initSearchOverlay();
     initAccountDrawer();
     initReassuranceDrawers();
+    initFeaturedProductCursor();
   }
 
   // On lance dès que possible — DOMContentLoaded ou immédiatement si déjà chargé

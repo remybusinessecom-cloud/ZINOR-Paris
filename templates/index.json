@@ -54,10 +54,15 @@
     "reassurance": {
       "type": "reassurance-banner",
       "settings": {}
+    },
+    "editorial": {
+      "type": "editorial-lifestyle",
+      "settings": {}
     }
   },
   "order": [
     "homepage",
+    "editorial",
     "reassurance"
   ]
 }

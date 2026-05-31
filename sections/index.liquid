@@ -586,6 +586,70 @@
     outline-offset: 3px;
   }
 
+  /* ========== CURSEUR DIRECTIONNEL DESKTOP ==========
+     Cercle semi-transparent qui suit la souris ; la flèche
+     s'oriente selon la moitié gauche / droite. Désactivé sur
+     mobile (pointer: coarse).
+     ============================================================ */
+  @media (hover: hover) and (pointer: fine) {
+    .zinor-featured__gallery-main {
+      cursor: none;
+    }
+  }
+
+  .zinor-featured__cursor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: rgba(10, 10, 10, 0.55);
+    border: 1px solid rgba(196, 149, 106, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 3;
+  }
+
+  .zinor-featured__cursor.is-visible {
+    opacity: 1;
+  }
+
+  .zinor-featured__cursor svg {
+    width: 20px;
+    height: 20px;
+    color: var(--color-accent);
+    transition: transform 0.15s ease;
+  }
+
+  /* Flèche pointant gauche par défaut, rotation 180° sur moitié droite */
+  .zinor-featured__cursor.is-right svg {
+    transform: rotate(180deg);
+  }
+
+  /* Mobile / tactile : pas de curseur custom */
+  @media (pointer: coarse) {
+    .zinor-featured__cursor {
+      display: none;
+    }
+    .zinor-featured__gallery-main {
+      cursor: auto;
+    }
+  }
+
+  /* prefers-reduced-motion : on garde le curseur visible mais
+     on coupe juste l'animation de rotation de la flèche */
+  @media (prefers-reduced-motion: reduce) {
+    .zinor-featured__cursor svg {
+      transition: none;
+    }
+  }
+
   /* Fiche produit */
   .zinor-featured__info {
     background-color: var(--color-background);
