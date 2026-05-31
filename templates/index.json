@@ -53,16 +53,28 @@
     },
     "reassurance": {
       "type": "reassurance-banner",
-      "settings": {}
-    },
-    "editorial": {
-      "type": "editorial-lifestyle",
-      "settings": {}
+      "settings": {
+        "title_return": "Retour offert",
+        "subtitle_return": "30 jours",
+        "drawer_return_title": "Retour offert sous 30 jours",
+        "drawer_return_body": "",
+        "title_lock": "Paiement sécurisé",
+        "subtitle_lock": "SSL · 3D Secure",
+        "drawer_lock_title": "Paiements sécurisés",
+        "drawer_lock_body": "",
+        "title_shipping": "Livraison offerte",
+        "subtitle_shipping": "France métropolitaine",
+        "drawer_shipping_title": "Livraison offerte",
+        "drawer_shipping_body": "",
+        "title_limited": "Édition limitée",
+        "subtitle_limited": "100 pièces numérotées",
+        "drawer_limited_title": "Édition strictement limitée",
+        "drawer_limited_body": ""
+      }
     }
   },
   "order": [
     "homepage",
-    "editorial",
     "reassurance"
   ]
 }
