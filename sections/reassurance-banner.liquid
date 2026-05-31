@@ -1,0 +1,579 @@
+{% comment %}
+  ============================================================
+  ZINOR PARIS — Bandeau de réassurance
+  4 badges interactifs (retour / paiement / livraison / édition).
+  Au clic, ouvre un drawer latéral droite avec le détail.
+  Pattern inspiré de Tissot, adapté luxe minimaliste sombre.
+  ============================================================
+{% endcomment %}
+
+<section class="zinor-reassurance" aria-label="Garanties ZINOR PARIS">
+  <div class="zinor-reassurance__container">
+    <div class="zinor-reassurance__grid">
+
+      {% comment %} ===== BADGE 1 — Retour offert ===== {% endcomment %}
+      <button
+        type="button"
+        class="zinor-reassurance__badge"
+        data-reassurance="return"
+        aria-label="En savoir plus sur les retours"
+        aria-expanded="false"
+        aria-controls="ReassuranceDrawerReturn">
+        <span class="zinor-reassurance__icon-wrap">
+          {% render 'icon-reassurance-return' %}
+        </span>
+        <span class="zinor-reassurance__title">
+          {{ section.settings.title_return | default: 'Retour offert' }}
+        </span>
+        <span class="zinor-reassurance__subtitle">
+          {{ section.settings.subtitle_return | default: '30 jours' }}
+        </span>
+      </button>
+
+      {% comment %} ===== BADGE 2 — Paiement sécurisé ===== {% endcomment %}
+      <button
+        type="button"
+        class="zinor-reassurance__badge"
+        data-reassurance="lock"
+        aria-label="En savoir plus sur les paiements sécurisés"
+        aria-expanded="false"
+        aria-controls="ReassuranceDrawerLock">
+        <span class="zinor-reassurance__icon-wrap">
+          {% render 'icon-reassurance-lock' %}
+        </span>
+        <span class="zinor-reassurance__title">
+          {{ section.settings.title_lock | default: 'Paiement sécurisé' }}
+        </span>
+        <span class="zinor-reassurance__subtitle">
+          {{ section.settings.subtitle_lock | default: 'SSL · 3D Secure' }}
+        </span>
+      </button>
+
+      {% comment %} ===== BADGE 3 — Livraison offerte ===== {% endcomment %}
+      <button
+        type="button"
+        class="zinor-reassurance__badge"
+        data-reassurance="shipping"
+        aria-label="En savoir plus sur la livraison"
+        aria-expanded="false"
+        aria-controls="ReassuranceDrawerShipping">
+        <span class="zinor-reassurance__icon-wrap">
+          {% render 'icon-reassurance-shipping' %}
+        </span>
+        <span class="zinor-reassurance__title">
+          {{ section.settings.title_shipping | default: 'Livraison offerte' }}
+        </span>
+        <span class="zinor-reassurance__subtitle">
+          {{ section.settings.subtitle_shipping | default: 'France métropolitaine' }}
+        </span>
+      </button>
+
+      {% comment %} ===== BADGE 4 — Édition limitée ===== {% endcomment %}
+      <button
+        type="button"
+        class="zinor-reassurance__badge"
+        data-reassurance="limited"
+        aria-label="En savoir plus sur l'édition limitée"
+        aria-expanded="false"
+        aria-controls="ReassuranceDrawerLimited">
+        <span class="zinor-reassurance__icon-wrap">
+          {% render 'icon-reassurance-limited' %}
+        </span>
+        <span class="zinor-reassurance__title">
+          {{ section.settings.title_limited | default: 'Édition limitée' }}
+        </span>
+        <span class="zinor-reassurance__subtitle">
+          {{ section.settings.subtitle_limited | default: '100 pièces numérotées' }}
+        </span>
+      </button>
+
+    </div>
+  </div>
+</section>
+
+{% comment %} ====== BACKDROP COMMUN AUX 4 DRAWERS ====== {% endcomment %}
+<div
+  class="reassurance-backdrop"
+  data-reassurance-backdrop
+  aria-hidden="true"></div>
+
+{% comment %} ====== 4 DRAWERS LATÉRAUX (droite) ====== {% endcomment %}
+
+{% comment %} ----- DRAWER 1 — Retour ----- {% endcomment %}
+<aside
+  class="reassurance-drawer"
+  id="ReassuranceDrawerReturn"
+  data-reassurance-drawer="return"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-labelledby="ReassuranceDrawerReturnTitle">
+  <button
+    type="button"
+    class="reassurance-drawer__close"
+    data-reassurance-close
+    aria-label="Fermer">
+    {% render 'icon-close' %}
+  </button>
+  <div class="reassurance-drawer__body">
+    <span class="reassurance-drawer__icon-xl">
+      {% render 'icon-reassurance-return' %}
+    </span>
+    <h2 class="reassurance-drawer__title" id="ReassuranceDrawerReturnTitle">
+      {{ section.settings.drawer_return_title | default: 'Retour offert sous 30 jours' }}
+    </h2>
+    <div class="reassurance-drawer__content">
+      {{ section.settings.drawer_return_body | default: "<p>Nous voulons que vous receviez votre pièce dans les meilleures conditions. Si elle ne vous convient pas, vous disposez de 30 jours à compter de la réception pour nous la retourner.</p><p><strong>Conditions de retour :</strong><br>· La montre doit être dans son état d'origine, non portée<br>· L'écrin et le certificat d'authenticité doivent accompagner le retour<br>· Aucune trace d'usure, ni rayure, ni odeur</p><p><strong>Procédure :</strong><br>1. Connectez-vous à votre espace client ou contactez-nous à contact@zinor-paris.com<br>2. Nous vous envoyons une étiquette retour pré-payée<br>3. Déposez le colis en bureau de poste<br>4. Remboursement sous 14 jours après réception et vérification</p><p>Pour toute question, notre service client répond sous 24h ouvrées.</p>" }}
+    </div>
+  </div>
+</aside>
+
+{% comment %} ----- DRAWER 2 — Paiement ----- {% endcomment %}
+<aside
+  class="reassurance-drawer"
+  id="ReassuranceDrawerLock"
+  data-reassurance-drawer="lock"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-labelledby="ReassuranceDrawerLockTitle">
+  <button
+    type="button"
+    class="reassurance-drawer__close"
+    data-reassurance-close
+    aria-label="Fermer">
+    {% render 'icon-close' %}
+  </button>
+  <div class="reassurance-drawer__body">
+    <span class="reassurance-drawer__icon-xl">
+      {% render 'icon-reassurance-lock' %}
+    </span>
+    <h2 class="reassurance-drawer__title" id="ReassuranceDrawerLockTitle">
+      {{ section.settings.drawer_lock_title | default: 'Paiements sécurisés' }}
+    </h2>
+    <div class="reassurance-drawer__content">
+      {{ section.settings.drawer_lock_body | default: "<p>La protection de vos données de paiement est notre priorité absolue. Toutes les transactions effectuées sur zinor-paris.com sont chiffrées via le protocole SSL et certifiées 3D Secure.</p><p><strong>Moyens de paiement acceptés :</strong><br>· Carte bancaire (Visa, Mastercard, American Express)<br>· PayPal<br>· Apple Pay<br>· Google Pay<br>· Paiement en 3 ou 4 fois sans frais via Klarna (dès 200 €)</p><p>Nous ne stockons aucune donnée bancaire. Toutes les informations de paiement transitent directement par nos partenaires certifiés PCI-DSS, le standard de sécurité le plus élevé du secteur.</p>" }}
+    </div>
+  </div>
+</aside>
+
+{% comment %} ----- DRAWER 3 — Livraison ----- {% endcomment %}
+<aside
+  class="reassurance-drawer"
+  id="ReassuranceDrawerShipping"
+  data-reassurance-drawer="shipping"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-labelledby="ReassuranceDrawerShippingTitle">
+  <button
+    type="button"
+    class="reassurance-drawer__close"
+    data-reassurance-close
+    aria-label="Fermer">
+    {% render 'icon-close' %}
+  </button>
+  <div class="reassurance-drawer__body">
+    <span class="reassurance-drawer__icon-xl">
+      {% render 'icon-reassurance-shipping' %}
+    </span>
+    <h2 class="reassurance-drawer__title" id="ReassuranceDrawerShippingTitle">
+      {{ section.settings.drawer_shipping_title | default: 'Livraison offerte' }}
+    </h2>
+    <div class="reassurance-drawer__content">
+      {{ section.settings.drawer_shipping_body | default: "<p>Chaque commande ZINOR PARIS est préparée à la main, depuis la France, avec le plus grand soin.</p><p><strong>Délais et frais :</strong><br>· France métropolitaine : 2-3 jours ouvrés · OFFERT<br>· Belgique, Luxembourg, Monaco : 3-5 jours ouvrés · OFFERT<br>· DOM-TOM : 5-10 jours ouvrés · 14,90 €<br>· Reste de l'Union Européenne : 4-6 jours ouvrés · 19,90 €<br>· Suisse, UK : 5-7 jours ouvrés · 24,90 €</p><p>Transporteur principal : Colissimo Suivi (France) et DHL Express (International). Numéro de suivi envoyé par email dès l'expédition.</p><p>Vous pouvez à tout moment suivre votre commande depuis votre espace client ou via le lien dans votre email de confirmation.</p>" }}
+    </div>
+  </div>
+</aside>
+
+{% comment %} ----- DRAWER 4 — Édition limitée ----- {% endcomment %}
+<aside
+  class="reassurance-drawer"
+  id="ReassuranceDrawerLimited"
+  data-reassurance-drawer="limited"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-labelledby="ReassuranceDrawerLimitedTitle">
+  <button
+    type="button"
+    class="reassurance-drawer__close"
+    data-reassurance-close
+    aria-label="Fermer">
+    {% render 'icon-close' %}
+  </button>
+  <div class="reassurance-drawer__body">
+    <span class="reassurance-drawer__icon-xl">
+      {% render 'icon-reassurance-limited' %}
+    </span>
+    <h2 class="reassurance-drawer__title" id="ReassuranceDrawerLimitedTitle">
+      {{ section.settings.drawer_limited_title | default: 'Édition strictement limitée' }}
+    </h2>
+    <div class="reassurance-drawer__content">
+      {{ section.settings.drawer_limited_body | default: "<p>L'Élégance First Edition est limitée à exactement 100 exemplaires. Ni 99, ni 101. Cent.</p><p>Chaque pièce est numérotée individuellement, gravée à l'arrière du boîtier de 001 à 100. Cette numérotation est définitive : une fois la centième pièce vendue, l'édition est close.</p><p>Elle ne sera jamais reproduite. Aucune nouvelle série, aucune réédition, aucune variation ne sera commercialisée sous le nom « First Edition ».</p><p>Acquérir une pièce, c'est rejoindre un cercle de cent personnes dans le monde — un cercle qui ne s'agrandira jamais.</p><p>Votre numéro de pièce est inscrit sur votre certificat d'authenticité personnalisé, daté et signé.</p>" }}
+    </div>
+  </div>
+</aside>
+
+{% stylesheet %}
+  /* ============================================================
+     BANDEAU — fond #0F0F0F, bordures fines, padding généreux
+     ============================================================ */
+  .zinor-reassurance {
+    background-color: #0F0F0F;
+    border-top: 1px solid #1F1F1F;
+    border-bottom: 1px solid #1F1F1F;
+    padding: 2.5rem 0; /* 40px mobile */
+  }
+
+  @media (min-width: 768px) {
+    .zinor-reassurance {
+      padding: 3.75rem 0; /* 60px desktop */
+    }
+  }
+
+  .zinor-reassurance__container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .zinor-reassurance__container {
+      padding: 0 2.5rem;
+    }
+  }
+
+  /* Grid 2x2 mobile → 4 colonnes desktop */
+  .zinor-reassurance__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem; /* 24px mobile */
+  }
+
+  @media (min-width: 768px) {
+    .zinor-reassurance__grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2.5rem; /* 40px desktop */
+    }
+  }
+
+  /* ===== BADGE — bouton cliquable ===== */
+  .zinor-reassurance__badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: center;
+    color: inherit;
+    font-family: inherit;
+  }
+
+  /* Cercle contenant l'icône */
+  .zinor-reassurance__icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: #1A1A1A;
+    color: var(--color-accent);
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  }
+
+  .zinor-reassurance__icon-wrap svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* Hover & focus — bascule rose gold avec icône noire */
+  .zinor-reassurance__badge:hover .zinor-reassurance__icon-wrap,
+  .zinor-reassurance__badge:focus-visible .zinor-reassurance__icon-wrap {
+    background-color: var(--color-accent);
+    color: var(--color-background);
+    transform: translateY(-2px);
+  }
+
+  .zinor-reassurance__title {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 1rem; /* 16px */
+    font-weight: 400;
+    color: var(--color-text);
+    margin-top: 1rem;
+  }
+
+  .zinor-reassurance__subtitle {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.75rem; /* 12px */
+    color: #888;
+    margin-top: 0.25rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ============================================================
+     DRAWER LATÉRAL DROITE — pattern identique au compte client
+     ============================================================ */
+  .reassurance-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background-color: rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+  }
+
+  .reassurance-backdrop.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0s linear 0s;
+  }
+
+  .reassurance-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    width: 100%;
+    max-width: 480px;
+    background-color: var(--color-background);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                visibility 0s linear 0.4s;
+    overflow-y: auto;
+  }
+
+  .reassurance-drawer.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                visibility 0s linear 0s;
+  }
+
+  .reassurance-drawer__close {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-accent);
+    transition: opacity var(--transition-fast);
+    z-index: 2;
+  }
+
+  .reassurance-drawer__close:hover,
+  .reassurance-drawer__close:focus-visible {
+    opacity: 0.7;
+  }
+
+  .reassurance-drawer__body {
+    padding: 3.75rem 2.5rem; /* 60px 40px */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Icône XL dans cercle */
+  .reassurance-drawer__icon-xl {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #1A1A1A;
+    color: var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .reassurance-drawer__icon-xl svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .reassurance-drawer__title {
+    font-family: var(--font-heading);
+    font-size: 2rem; /* 32px */
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--color-text);
+    text-align: center;
+    margin: 2rem 0 0; /* 32px top */
+  }
+
+  .reassurance-drawer__content {
+    width: 100%;
+    margin-top: 2.5rem; /* 40px */
+    font-family: var(--font-body);
+    font-size: 0.9375rem; /* 15px */
+    line-height: 1.7;
+    color: #D5D0CB;
+  }
+
+  .reassurance-drawer__content p {
+    margin: 0 0 1rem;
+  }
+
+  .reassurance-drawer__content p:last-child {
+    margin-bottom: 0;
+  }
+
+  .reassurance-drawer__content strong {
+    color: var(--color-text);
+    font-weight: 500;
+  }
+
+  /* Respect prefers-reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    .zinor-reassurance__icon-wrap,
+    .reassurance-drawer,
+    .reassurance-backdrop {
+      transition: none;
+    }
+    .zinor-reassurance__badge:hover .zinor-reassurance__icon-wrap {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Bandeau réassurance",
+  "tag": "section",
+  "class": "zinor-reassurance-section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "BADGE 1 — RETOUR"
+    },
+    {
+      "type": "text",
+      "id": "title_return",
+      "label": "Titre",
+      "default": "Retour offert"
+    },
+    {
+      "type": "text",
+      "id": "subtitle_return",
+      "label": "Sous-titre",
+      "default": "30 jours"
+    },
+    {
+      "type": "text",
+      "id": "drawer_return_title",
+      "label": "Titre du drawer",
+      "default": "Retour offert sous 30 jours"
+    },
+    {
+      "type": "richtext",
+      "id": "drawer_return_body",
+      "label": "Contenu du drawer"
+    },
+
+    {
+      "type": "header",
+      "content": "BADGE 2 — PAIEMENT"
+    },
+    {
+      "type": "text",
+      "id": "title_lock",
+      "label": "Titre",
+      "default": "Paiement sécurisé"
+    },
+    {
+      "type": "text",
+      "id": "subtitle_lock",
+      "label": "Sous-titre",
+      "default": "SSL · 3D Secure"
+    },
+    {
+      "type": "text",
+      "id": "drawer_lock_title",
+      "label": "Titre du drawer",
+      "default": "Paiements sécurisés"
+    },
+    {
+      "type": "richtext",
+      "id": "drawer_lock_body",
+      "label": "Contenu du drawer"
+    },
+
+    {
+      "type": "header",
+      "content": "BADGE 3 — LIVRAISON"
+    },
+    {
+      "type": "text",
+      "id": "title_shipping",
+      "label": "Titre",
+      "default": "Livraison offerte"
+    },
+    {
+      "type": "text",
+      "id": "subtitle_shipping",
+      "label": "Sous-titre",
+      "default": "France métropolitaine"
+    },
+    {
+      "type": "text",
+      "id": "drawer_shipping_title",
+      "label": "Titre du drawer",
+      "default": "Livraison offerte"
+    },
+    {
+      "type": "richtext",
+      "id": "drawer_shipping_body",
+      "label": "Contenu du drawer"
+    },
+
+    {
+      "type": "header",
+      "content": "BADGE 4 — ÉDITION LIMITÉE"
+    },
+    {
+      "type": "text",
+      "id": "title_limited",
+      "label": "Titre",
+      "default": "Édition limitée"
+    },
+    {
+      "type": "text",
+      "id": "subtitle_limited",
+      "label": "Sous-titre",
+      "default": "100 pièces numérotées"
+    },
+    {
+      "type": "text",
+      "id": "drawer_limited_title",
+      "label": "Titre du drawer",
+      "default": "Édition strictement limitée"
+    },
+    {
+      "type": "richtext",
+      "id": "drawer_limited_body",
+      "label": "Contenu du drawer"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bandeau réassurance"
+    }
+  ]
+}
+{% endschema %}

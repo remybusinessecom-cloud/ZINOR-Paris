@@ -21,9 +21,14 @@
         "outro_title": "Une pièce pour ceux qui savent.",
         "outro_subtitle": "Fabriquée pour durer. Conçue pour vous distinguer."
       }
+    },
+    "reassurance": {
+      "type": "reassurance-banner",
+      "settings": {}
     }
   },
   "order": [
-    "main"
+    "main",
+    "reassurance"
   ]
 }

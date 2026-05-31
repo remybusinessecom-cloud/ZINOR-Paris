@@ -575,7 +575,120 @@
   }
 
   /* ============================================================
-     10. INITIALISATION — au chargement du DOM
+     10. DRAWERS DE RÉASSURANCE — 4 drawers latéraux droite
+     Chaque badge [data-reassurance="<key>"] ouvre le drawer
+     [data-reassurance-drawer="<key>"]. Un seul drawer ouvert
+     à la fois ; le clic sur un autre badge ferme le précédent.
+     Réutilise lockScroll, attachFocusTrap déjà en place.
+     ============================================================ */
+  function initReassuranceDrawers() {
+    const triggers = document.querySelectorAll('[data-reassurance]');
+    const drawers = document.querySelectorAll('[data-reassurance-drawer]');
+    const closeButtons = document.querySelectorAll('[data-reassurance-close]');
+    const backdrop = document.querySelector('[data-reassurance-backdrop]');
+
+    if (triggers.length === 0 || drawers.length === 0) return;
+
+    // Mémorise l'élément focalisé pour le restaurer à la fermeture
+    let lastFocused = null;
+
+    function getDrawerByKey(key) {
+      return document.querySelector('[data-reassurance-drawer="' + key + '"]');
+    }
+
+    function isAnyOpen() {
+      return document.querySelector('[data-reassurance-drawer].is-open') !== null;
+    }
+
+    function closeAll() {
+      let hadOpen = false;
+      drawers.forEach(function (d) {
+        if (d.classList.contains('is-open')) {
+          d.classList.remove('is-open');
+          d.setAttribute('aria-hidden', 'true');
+          hadOpen = true;
+        }
+      });
+
+      // Resynchronise aria-expanded sur tous les triggers
+      triggers.forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
+
+      if (hadOpen) {
+        if (backdrop) {
+          backdrop.classList.remove('is-visible');
+          backdrop.setAttribute('aria-hidden', 'true');
+        }
+        unlockScroll();
+        if (lastFocused && typeof lastFocused.focus === 'function') {
+          lastFocused.focus();
+        }
+      }
+    }
+
+    function openDrawer(key, trigger) {
+      const drawer = getDrawerByKey(key);
+      if (!drawer) return;
+
+      // Si un autre drawer est déjà ouvert, on le ferme sans
+      // déverrouiller le scroll (on enchaîne directement)
+      const previouslyOpen = isAnyOpen();
+      drawers.forEach(function (d) {
+        d.classList.remove('is-open');
+        d.setAttribute('aria-hidden', 'true');
+      });
+      triggers.forEach(function (t) { t.setAttribute('aria-expanded', 'false'); });
+
+      // Mémorise le trigger pour restaurer le focus
+      if (!previouslyOpen) {
+        lastFocused = trigger || document.activeElement;
+        lockScroll();
+        if (backdrop) {
+          backdrop.classList.add('is-visible');
+          backdrop.setAttribute('aria-hidden', 'false');
+        }
+      }
+
+      drawer.classList.add('is-open');
+      drawer.setAttribute('aria-hidden', 'false');
+      if (trigger) trigger.setAttribute('aria-expanded', 'true');
+
+      // Focus sur le bouton de fermeture après la transition
+      const closeBtn = drawer.querySelector('[data-reassurance-close]');
+      if (closeBtn) setTimeout(function () { closeBtn.focus(); }, 100);
+    }
+
+    triggers.forEach(function (trigger) {
+      trigger.addEventListener('click', function () {
+        openDrawer(trigger.dataset.reassurance, trigger);
+      });
+    });
+
+    closeButtons.forEach(function (btn) {
+      btn.addEventListener('click', closeAll);
+    });
+
+    if (backdrop) {
+      backdrop.addEventListener('click', closeAll);
+    }
+
+    // Touche Échap
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && isAnyOpen()) {
+        event.preventDefault();
+        closeAll();
+      }
+    });
+
+    // Focus trap sur chaque drawer
+    drawers.forEach(function (drawer) {
+      attachFocusTrap(drawer, function () {
+        return drawer.classList.contains('is-open');
+      });
+    });
+  }
+
+  /* ============================================================
+     11. INITIALISATION — au chargement du DOM
      ============================================================ */
   function init() {
     initScrollAnimations();
@@ -588,6 +701,7 @@
     initMobileMenu();
     initSearchOverlay();
     initAccountDrawer();
+    initReassuranceDrawers();
   }
 
   // On lance dès que possible — DOMContentLoaded ou immédiatement si déjà chargé

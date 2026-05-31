@@ -50,9 +50,14 @@
         "craft_title_3": "Cuir grainé cognac",
         "craft_desc_3": "Boucle rose gold gravée."
       }
+    },
+    "reassurance": {
+      "type": "reassurance-banner",
+      "settings": {}
     }
   },
   "order": [
-    "homepage"
+    "homepage",
+    "reassurance"
   ]
 }
