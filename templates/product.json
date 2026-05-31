@@ -1,9 +1,29 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "main-product",
-      "settings": {}
+      "settings": {
+        "product_subtitle": "First Edition — Pièce numérotée",
+        "intro_text": "<p>L'Élégance n'est pas un ornement. C'est une décision. Cadran soleil bleu nuit, finition rose gold, bracelet cuir grainé cognac, mouvement SEIKO VJ32 — chaque détail choisi pour durer.</p>",
+        "show_low_stock_badge": true,
+        "low_stock_threshold": 20,
+        "accordion_default_open": "caracteristiques",
+        "outro_image": "shopify://shop_images/Homme_elegant_portant_la_montre_ZINOR_PARIS.png",
+        "outro_title": "Une pièce pour ceux qui savent.",
+        "outro_subtitle": "Fabriquée pour durer. Conçue pour vous distinguer."
+      }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }
