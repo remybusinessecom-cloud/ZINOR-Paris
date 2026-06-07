@@ -121,91 +121,229 @@
   }
 
   /* ============================================================
-     4. GALERIE PRODUIT — basique
-     Clic sur une miniature → met à jour l'image principale
+     4. GALERIE PRODUIT — fiche produit (stacked images)
+     Toutes les images sont rendues simultanément, empilées en
+     absolute. Le swap se fait par toggle de classe .is-active
+     (transition opacity gérée en CSS — pas de flash de src).
      Structure attendue :
        [data-product-gallery]
-         [data-gallery-main] <img>
-         [data-gallery-thumbs]
-           [data-gallery-thumb data-image-src="..."]
+         [data-product-thumbs]
+           [data-product-thumb data-image-index="N"]
+         [data-product-main]
+           [data-product-image data-image-index="N" data-image-zoom="..."]
+         [data-product-dots]
+           [data-product-thumb data-image-index="N"]
      ============================================================ */
   function initProductGallery() {
     const galleries = document.querySelectorAll('[data-product-gallery]');
     if (galleries.length === 0) return;
 
     galleries.forEach(function (gallery) {
-      const mainContainer = gallery.querySelector('[data-gallery-main]');
-      const mainImage = mainContainer ? mainContainer.querySelector('img') : null;
-      const thumbs = gallery.querySelectorAll('[data-gallery-thumb]');
+      const images = Array.from(gallery.querySelectorAll('[data-product-image]'));
+      const thumbs = Array.from(gallery.querySelectorAll('[data-product-thumb]'));
 
-      if (!mainImage || thumbs.length === 0) return;
+      if (images.length === 0 || thumbs.length === 0) return;
 
-      // Transition CSS appliquée à l'image principale
-      mainImage.style.transition = 'opacity 300ms ease, transform 400ms ease-out';
+      // Active la paire image + thumbnails (desktop + mobile) via data-image-index
+      function activate(index) {
+        const target = String(index);
 
-      // Fonction interne : active une miniature donnée et met à jour l'image principale
-      function activate(thumb) {
-        const newSrc = thumb.dataset.imageSrc;
-        const newAlt = thumb.dataset.imageAlt || '';
-        const newSrcset = thumb.dataset.imageSrcset || '';
-
-        if (!newSrc) return;
-
-        // Transition douce — fade out, swap, fade in
-        mainImage.style.opacity = '0';
-        setTimeout(function () {
-          mainImage.src = newSrc;
-          mainImage.alt = newAlt;
-          if (newSrcset) mainImage.srcset = newSrcset;
-          mainImage.style.opacity = '1';
-        }, 200);
-
-        // Mise à jour de l'état actif sur TOUTES les miniatures
-        // (synchronise les deux jeux : thumbs desktop + dots mobile via data-image-index)
-        const activeIndex = thumb.dataset.imageIndex;
-        thumbs.forEach(function (t) {
-          const isMatch = activeIndex != null && t.dataset.imageIndex === activeIndex;
-          if (isMatch || t === thumb) {
-            t.classList.add('is-active');
-            t.setAttribute('aria-selected', 'true');
+        images.forEach(function (img) {
+          if (img.dataset.imageIndex === target) {
+            img.classList.add('is-active');
           } else {
-            t.classList.remove('is-active');
-            t.setAttribute('aria-selected', 'false');
+            img.classList.remove('is-active');
+          }
+        });
+
+        thumbs.forEach(function (thumb) {
+          if (thumb.dataset.imageIndex === target) {
+            thumb.classList.add('is-active');
+            thumb.setAttribute('aria-selected', 'true');
+          } else {
+            thumb.classList.remove('is-active');
+            thumb.setAttribute('aria-selected', 'false');
           }
         });
       }
 
-      // Clic sur une miniature
+      // Clic sur une miniature ou un dot — swap immédiat
       thumbs.forEach(function (thumb) {
         thumb.addEventListener('click', function (event) {
           event.preventDefault();
-          activate(thumb);
+          const index = parseInt(thumb.dataset.imageIndex, 10);
+          if (!Number.isNaN(index)) activate(index);
         });
       });
 
-      // Navigation clavier — flèches gauche/droite dans les listes de miniatures
-      const thumbContainers = gallery.querySelectorAll('[data-gallery-thumbs], [data-gallery-dots]');
+      // Navigation clavier — flèches gauche/droite (et haut/bas pour les thumbs verticaux)
+      const thumbContainers = gallery.querySelectorAll('[data-product-thumbs], [data-product-dots]');
       thumbContainers.forEach(function (container) {
         container.addEventListener('keydown', function (event) {
-          if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+          if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' &&
+              event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
 
-          // Ne joue que sur les miniatures de ce container
-          const localThumbs = Array.from(container.querySelectorAll('[data-gallery-thumb]'));
+          const localThumbs = Array.from(container.querySelectorAll('[data-product-thumb]'));
           const currentIndex = localThumbs.indexOf(document.activeElement);
           if (currentIndex === -1) return;
 
           event.preventDefault();
-          let nextIndex = currentIndex;
-          if (event.key === 'ArrowRight') {
+          let nextIndex;
+          if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
             nextIndex = (currentIndex + 1) % localThumbs.length;
           } else {
             nextIndex = (currentIndex - 1 + localThumbs.length) % localThumbs.length;
           }
           localThumbs[nextIndex].focus();
-          activate(localThumbs[nextIndex]);
+          const targetIndex = parseInt(localThumbs[nextIndex].dataset.imageIndex, 10);
+          if (!Number.isNaN(targetIndex)) activate(targetIndex);
         });
       });
     });
+  }
+
+  /* ============================================================
+     4b. CURSEUR DIRECTIONNEL — image principale fiche produit
+     Cercle 52px qui suit la souris dans .zinor-product__main.
+     Flèche orientée selon la moitié (gauche : ← / droite : →).
+     Clic gauche → image précédente, clic droite → suivante.
+     Désactivé sur tactile.
+     ============================================================ */
+  function initProductCursor() {
+    const galleries = document.querySelectorAll('[data-product-gallery]');
+    if (galleries.length === 0) return;
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+
+    galleries.forEach(function (gallery) {
+      const main = gallery.querySelector('[data-product-main]');
+      const images = Array.from(gallery.querySelectorAll('[data-product-image]'));
+      const thumbs = Array.from(gallery.querySelectorAll('[data-product-thumb]'));
+
+      if (!main || images.length <= 1 || thumbs.length === 0) return;
+
+      // Création du curseur (flèche ← par défaut, pivote sur moitié droite)
+      const cursor = document.createElement('div');
+      cursor.className = 'zinor-product__cursor';
+      cursor.setAttribute('aria-hidden', 'true');
+      cursor.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="20" y1="12" x2="4" y2="12"/><polyline points="10 18 4 12 10 6"/></svg>';
+      main.appendChild(cursor);
+
+      function getActiveIndex() {
+        for (let i = 0; i < images.length; i++) {
+          if (images[i].classList.contains('is-active')) return i;
+        }
+        return 0;
+      }
+
+      function navigate(direction) {
+        const current = getActiveIndex();
+        let next = current + direction;
+        if (next < 0) next = images.length - 1;
+        if (next >= images.length) next = 0;
+        // Clique le premier thumbnail correspondant — réutilise la logique d'initProductGallery
+        const targetThumb = thumbs.find(function (t) {
+          return parseInt(t.dataset.imageIndex, 10) === next;
+        });
+        if (targetThumb) targetThumb.click();
+      }
+
+      main.addEventListener('mousemove', function (event) {
+        const rect = main.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        cursor.style.left = x + 'px';
+        cursor.style.top = y + 'px';
+        cursor.classList.toggle('is-right', x > rect.width / 2);
+      });
+
+      main.addEventListener('mouseenter', function () {
+        cursor.classList.add('is-visible');
+      });
+
+      main.addEventListener('mouseleave', function () {
+        cursor.classList.remove('is-visible');
+      });
+
+      main.addEventListener('click', function (event) {
+        // Ne pas naviguer si on a cliqué sur le bouton zoom
+        if (event.target.closest('[data-product-zoom-trigger]')) return;
+        const rect = main.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        navigate(x > rect.width / 2 ? 1 : -1);
+      });
+    });
+  }
+
+  /* ============================================================
+     4c. LIGHTBOX ZOOM — fiche produit
+     Bouton [data-product-zoom-trigger] ouvre la lightbox avec
+     l'image actuellement active (via data-image-zoom HD).
+     Fermeture : croix, Échap, clic hors image. Focus trap.
+     ============================================================ */
+  function initProductZoom() {
+    const trigger = document.querySelector('[data-product-zoom-trigger]');
+    const lightbox = document.querySelector('[data-product-lightbox]');
+    const closeBtn = document.querySelector('[data-product-lightbox-close]');
+    const lightboxImage = document.querySelector('[data-product-lightbox-image]');
+
+    if (!trigger || !lightbox || !lightboxImage) return;
+
+    let lastFocused = null;
+    const isOpen = function () { return lightbox.classList.contains('is-open'); };
+
+    function open() {
+      // Récupère l'image actuellement active
+      const activeWrapper = document.querySelector('[data-product-image].is-active');
+      if (!activeWrapper) return;
+
+      const zoomSrc = activeWrapper.dataset.imageZoom;
+      const innerImg = activeWrapper.querySelector('img');
+      const alt = innerImg ? innerImg.alt : '';
+
+      if (zoomSrc) {
+        lightboxImage.src = zoomSrc;
+        lightboxImage.alt = alt;
+      }
+
+      lastFocused = document.activeElement;
+      lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
+      lockScroll();
+      if (closeBtn) setTimeout(function () { closeBtn.focus(); }, 100);
+    }
+
+    function close() {
+      lightbox.classList.remove('is-open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      unlockScroll();
+      if (lastFocused && typeof lastFocused.focus === 'function') {
+        lastFocused.focus();
+      }
+    }
+
+    trigger.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      open();
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', close);
+
+    // Clic en dehors de l'image (sur le backdrop) ferme aussi
+    lightbox.addEventListener('click', function (event) {
+      if (event.target === lightbox) close();
+    });
+
+    // Touche Échap
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && isOpen()) {
+        event.preventDefault();
+        close();
+      }
+    });
+
+    // Focus trap
+    attachFocusTrap(lightbox, isOpen);
   }
 
   /* ============================================================
@@ -767,6 +905,8 @@
     initStickyHeader();
     initStockCounter();
     initProductGallery();
+    initProductCursor();
+    initProductZoom();
     initFeaturedGallery();
     initAccordion();
     initStickyATC();

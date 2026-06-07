@@ -27,7 +27,7 @@
         {% comment %} ----- Miniatures verticales (desktop) ----- {% endcomment %}
         <div
           class="zinor-product__thumbs"
-          data-gallery-thumbs
+          data-product-thumbs
           role="tablist"
           aria-label="Visuels du produit"
           aria-orientation="vertical">
@@ -35,10 +35,8 @@
             <button
               type="button"
               class="zinor-product__thumb{% if forloop.first %} is-active{% endif %}"
-              data-gallery-thumb
+              data-product-thumb
               data-image-index="{{ forloop.index0 }}"
-              data-image-src="{{ image | image_url: width: 1200 }}"
-              data-image-alt="{{ image.alt | escape | default: product.title }}"
               role="tab"
               aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
               aria-label="Visuel {{ forloop.index }} sur {{ product.images.size }}">
@@ -55,20 +53,39 @@
           {%- endfor -%}
         </div>
 
-        {% comment %} ----- Image principale ----- {% endcomment %}
-        <div class="zinor-product__main" data-gallery-main>
-          {%- if product.featured_image -%}
-            {{
-              product.featured_image
-              | image_url: width: 1600
-              | image_tag:
-                loading: 'eager',
-                fetchpriority: 'high',
-                widths: '400, 600, 900, 1200, 1600',
-                sizes: '(min-width: 1024px) 50vw, 100vw',
-                alt: product.featured_image.alt | default: product.title,
-                class: 'zinor-product__main-image'
-            }}
+        {% comment %} ----- Image principale — empilement de tous les visuels ----- {% endcomment %}
+        <div class="zinor-product__main" data-product-main>
+          {%- for image in product.images limit: 6 -%}
+            <div
+              class="zinor-product__image{% if forloop.first %} is-active{% endif %}"
+              data-product-image
+              data-image-index="{{ forloop.index0 }}"
+              data-image-zoom="{{ image | image_url: width: 2400 }}">
+              {{
+                image
+                | image_url: width: 1600
+                | image_tag:
+                  loading: 'lazy',
+                  fetchpriority: forloop.first | default: false,
+                  widths: '400, 600, 900, 1200, 1600',
+                  sizes: '(min-width: 1024px) 50vw, 100vw',
+                  alt: image.alt | default: product.title,
+                  class: 'zinor-product__main-image'
+              }}
+            </div>
+          {%- endfor -%}
+
+          {% comment %} Bouton zoom — fixe en bas à droite de l'image principale {% endcomment %}
+          {%- if product.images.size > 0 -%}
+            <button
+              type="button"
+              class="zinor-product__zoom-btn"
+              data-product-zoom-trigger
+              aria-label="Zoomer sur l'image"
+              aria-controls="ProductLightbox">
+              <span aria-hidden="true">+</span>
+              <span class="zinor-product__zoom-tooltip">Zoomer sur l'image</span>
+            </button>
           {%- endif -%}
         </div>
 
@@ -77,15 +94,13 @@
           class="zinor-product__dots"
           role="tablist"
           aria-label="Navigation des visuels"
-          data-gallery-dots>
+          data-product-dots>
           {%- for image in product.images limit: 6 -%}
             <button
               type="button"
               class="zinor-product__dot{% if forloop.first %} is-active{% endif %}"
-              data-gallery-thumb
+              data-product-thumb
               data-image-index="{{ forloop.index0 }}"
-              data-image-src="{{ image | image_url: width: 1200 }}"
-              data-image-alt="{{ image.alt | escape | default: product.title }}"
               role="tab"
               aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
               aria-label="Visuel {{ forloop.index }}"></button>
@@ -294,6 +309,29 @@
   </div>
 </section>
 
+{% comment %} ====== LIGHTBOX ZOOM — fullscreen overlay ====== {% endcomment %}
+<div
+  class="product-lightbox"
+  id="ProductLightbox"
+  data-product-lightbox
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  aria-label="Vue agrandie de l'image">
+  <button
+    type="button"
+    class="product-lightbox__close"
+    data-product-lightbox-close
+    aria-label="Fermer la vue agrandie">
+    {% render 'icon-close' %}
+  </button>
+  <img
+    src=""
+    alt=""
+    class="product-lightbox__image"
+    data-product-lightbox-image>
+</div>
+
 {% comment %} JSON-LD pour le SEO produit {% endcomment %}
 <script type="application/ld+json">
   {{ product | structured_data }}
@@ -368,47 +406,246 @@
     width: 80px;
     height: 80px;
     padding: 0;
-    background-color: var(--color-surface);
+    background-color: #0F0F0F;
     border: 1px solid transparent;
     cursor: pointer;
     overflow: hidden;
-    transition: border-color 200ms ease, opacity 200ms ease;
-    opacity: 0.7;
+    opacity: 0.5;
+    transition: opacity 0.2s ease, border-color 0.2s ease;
   }
 
   .zinor-product__thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
   }
 
   .zinor-product__thumb:hover,
   .zinor-product__thumb:focus-visible {
-    opacity: 1;
+    opacity: 0.8;
   }
 
   .zinor-product__thumb.is-active {
-    border-color: var(--color-accent);
     opacity: 1;
+    border-color: var(--color-accent); /* #C4956A */
   }
 
-  /* Image principale */
+  /* ========== IMAGE PRINCIPALE ==========
+     Hauteurs fixes (380 mobile / 450 tablette / 600 desktop)
+     Fond #0F0F0F. Images empilées en absolute, swap par classe.
+     ============================================================ */
   .zinor-product__main {
     position: relative;
-    aspect-ratio: 1 / 1;
-    background-color: var(--color-surface);
+    width: 100%;
+    height: 380px; /* mobile */
+    background-color: #0F0F0F;
     overflow: hidden;
   }
 
+  @media (min-width: 768px) {
+    .zinor-product__main {
+      height: 450px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .zinor-product__main {
+      height: 600px;
+    }
+  }
+
+  /* Chaque visuel — empilé en absolute, invisible par défaut */
+  .zinor-product__image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .zinor-product__image.is-active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .zinor-product__image img,
   .zinor-product__main-image {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    transition: opacity 300ms ease, transform 400ms ease-out;
+    object-fit: contain; /* ne jamais couper la montre */
+    object-position: center;
+    display: block;
   }
 
-  .zinor-product__main:hover .zinor-product__main-image {
-    transform: scale(1.05);
+  /* ========== CURSEUR DIRECTIONNEL DESKTOP ==========
+     Pattern identique à la galerie produit phare de la home.
+     ============================================================ */
+  @media (hover: hover) and (pointer: fine) {
+    .zinor-product__main {
+      cursor: none;
+    }
+  }
+
+  .zinor-product__cursor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: rgba(10, 10, 10, 0.55);
+    border: 1px solid rgba(196, 149, 106, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 3;
+  }
+
+  .zinor-product__cursor.is-visible {
+    opacity: 1;
+  }
+
+  .zinor-product__cursor svg {
+    width: 20px;
+    height: 20px;
+    color: var(--color-accent);
+    transition: transform 0.15s ease;
+  }
+
+  /* Flèche pointant gauche par défaut, pivote sur la moitié droite */
+  .zinor-product__cursor.is-right svg {
+    transform: rotate(180deg);
+  }
+
+  /* Tactile : pas de curseur custom */
+  @media (pointer: coarse) {
+    .zinor-product__cursor {
+      display: none;
+    }
+    .zinor-product__main {
+      cursor: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .zinor-product__cursor svg {
+      transition: none;
+    }
+  }
+
+  /* ========== BOUTON ZOOM + TOOLTIP ========== */
+  .zinor-product__zoom-btn {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(10, 10, 10, 0.7);
+    border: 1px solid rgba(196, 149, 106, 0.35);
+    color: var(--color-accent);
+    font-family: var(--font-body);
+    font-size: 1.1rem;
+    font-weight: 400;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 4; /* au-dessus du curseur (z-3) */
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .zinor-product__zoom-btn:hover,
+  .zinor-product__zoom-btn:focus-visible {
+    background-color: rgba(10, 10, 10, 0.85);
+    border-color: rgba(196, 149, 106, 0.7);
+    outline: none;
+  }
+
+  .zinor-product__zoom-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    background-color: #1A1A1A;
+    color: var(--color-text);
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
+    pointer-events: none;
+  }
+
+  .zinor-product__zoom-btn:hover .zinor-product__zoom-tooltip,
+  .zinor-product__zoom-btn:focus-visible .zinor-product__zoom-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease, visibility 0s linear 0s;
+  }
+
+  /* ========== LIGHTBOX ZOOM ========== */
+  .product-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background-color: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+  }
+
+  .product-lightbox.is-open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0s linear 0s;
+  }
+
+  .product-lightbox__image {
+    max-width: 90vw;
+    max-height: 90vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .product-lightbox__close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
+  }
+
+  .product-lightbox__close:hover,
+  .product-lightbox__close:focus-visible {
+    opacity: 0.7;
+    outline: none;
   }
 
   /* Dots mobile (cachés desktop) */
@@ -807,15 +1044,13 @@
 
   /* Respect des préférences utilisateur */
   @media (prefers-reduced-motion: reduce) {
-    .zinor-product__main-image,
+    .zinor-product__image,
     .zinor-accordion__icon::before,
     .zinor-accordion__icon::after,
     .zinor-accordion__panel,
-    .zinor-product__sticky-atc {
+    .zinor-product__sticky-atc,
+    .product-lightbox {
       transition: none;
-    }
-    .zinor-product__main:hover .zinor-product__main-image {
-      transform: none;
     }
   }
 {% endstylesheet %}
