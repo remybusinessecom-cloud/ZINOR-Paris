@@ -22,8 +22,19 @@
          COLONNE GAUCHE — GALERIE PRODUIT
          Desktop : miniatures verticales + image principale
          Mobile  : image principale en haut, dots en bas
+         La hauteur desktop de l'image principale est calculée pour
+         correspondre exactement à la colonne de miniatures :
+         N thumbs de 80px + (N-1) gaps de 12px (max 6 visuels).
          ============================================================ {% endcomment %}
-      <div class="zinor-product__gallery" data-product-gallery>
+      {%- assign thumb_count = product.images.size -%}
+      {%- if thumb_count > 6 -%}{%- assign thumb_count = 6 -%}{%- endif -%}
+      {%- assign thumbs_gaps = thumb_count | minus: 1 -%}
+      {%- assign gaps_total = thumbs_gaps | times: 12 -%}
+      {%- assign thumbs_height = thumb_count | times: 80 | plus: gaps_total -%}
+      <div
+        class="zinor-product__gallery"
+        data-product-gallery
+        style="--thumbs-height: {{ thumbs_height }}px;">
         {% comment %} ----- Miniatures verticales (desktop) ----- {% endcomment %}
         <div
           class="zinor-product__thumbs"
@@ -432,15 +443,19 @@
   }
 
   /* ========== IMAGE PRINCIPALE ==========
-     Hauteurs fixes (380 mobile / 450 tablette / 600 desktop)
+     Mobile/tablette : hauteurs fixes (380 / 450px).
+     Desktop : hauteur = colonne thumbnails (--thumbs-height),
+     pour un alignement parfait top/bottom avec les miniatures.
      Fond #0F0F0F. Images empilées en absolute, swap par classe.
+     overflow: visible pour ne pas couper le bouton zoom ; le
+     débordement des images est contenu par .zinor-product__image.
      ============================================================ */
   .zinor-product__main {
     position: relative;
     width: 100%;
     height: 380px; /* mobile */
     background-color: #0F0F0F;
-    overflow: hidden;
+    overflow: visible;
   }
 
   @media (min-width: 768px) {
@@ -451,17 +466,22 @@
 
   @media (min-width: 1024px) {
     .zinor-product__main {
-      height: 600px;
+      /* Aligné sur la hauteur de la colonne de miniatures.
+         Repli sur 600px si la variable n'est pas définie. */
+      height: var(--thumbs-height, 600px);
     }
   }
 
-  /* Chaque visuel — empilé en absolute, invisible par défaut */
+  /* Chaque visuel — empilé en absolute, invisible par défaut.
+     overflow: hidden borne l'image à son cadre sans affecter le
+     bouton zoom (qui vit dans .zinor-product__main, overflow visible). */
   .zinor-product__image {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
+    overflow: hidden;
     opacity: 0;
     transition: opacity 0.3s ease;
     pointer-events: none;

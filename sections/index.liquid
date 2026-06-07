@@ -10,7 +10,12 @@
 
 {%- liquid
   # Récupération du produit phare (depuis le sélecteur de section)
-  assign featured_product = all_products[section.settings.featured_product]
+  # Le réglage de type "product" renvoie directement l'objet produit.
+  # On garde une compatibilité ascendante si une ancienne valeur (handle) est stockée.
+  assign featured_product = section.settings.featured_product
+  if featured_product == blank and section.settings.featured_product != blank
+    assign featured_product = all_products[section.settings.featured_product]
+  endif
 
   # Compteur de stock : on combine le réglage manuel + les vraies ventes Shopify si dispo
   assign edition_total = section.settings.edition_total | default: 100
@@ -185,26 +190,20 @@
       </p>
 
       {%- if featured_product != blank -%}
-        <form
-          method="post"
-          action="{{ routes.cart_add_url }}"
-          accept-charset="UTF-8"
-          enctype="multipart/form-data">
-          <input type="hidden" name="id" value="{{ featured_product.selected_or_first_available_variant.id }}">
-          <button
-            type="submit"
-            class="btn btn--primary zinor-featured__cta"
-            {% unless featured_product.available %}disabled{% endunless %}>
-            {%- if featured_product.available -%}
-              {{ section.settings.product_cta | default: 'Acquérir cette pièce' }}
-            {%- else -%}
-              {{ 'products.product.sold_out' | t }}
-            {%- endif -%}
-          </button>
-        </form>
-      {%- else -%}
+        {% comment %} Lien dynamique vers la fiche du produit sélectionné {% endcomment %}
         <a
-          href="{{ section.settings.product_cta_link | default: '/products' }}"
+          href="{{ featured_product.url }}"
+          class="btn btn--primary zinor-featured__cta">
+          {%- if featured_product.available -%}
+            {{ section.settings.product_cta | default: 'Acquérir cette pièce' }}
+          {%- else -%}
+            {{ 'products.product.sold_out' | t }}
+          {%- endif -%}
+        </a>
+      {%- else -%}
+        {% comment %} Repli : lien éditable, sinon page de toutes les pièces {% endcomment %}
+        <a
+          href="{{ section.settings.product_cta_link | default: routes.all_products_collection_url }}"
           class="btn btn--primary zinor-featured__cta">
           {{ section.settings.product_cta | default: 'Acquérir cette pièce' }}
         </a>
